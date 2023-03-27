@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "693568913009",
+    "project_id": "shopingyou-64e8e",
+    "storage_bucket": "shopingyou-64e8e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:693568913009:android:4513911866b1f2140e25d0",
+        "android_client_info": {
+          "package_name": "com.vigortech.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "693568913009-ivrm40fc0o097ifd2i2h5vllhdt0u5e6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQZCBOD9r-KCsqv-g4Op4xZArbxpuK318"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "693568913009-ivrm40fc0o097ifd2i2h5vllhdt0u5e6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
