@@ -4,8 +4,8 @@ import 'package:shoppingyou/mobile/admin/adminextra/order_users.dart';
 
 import '../../responsive/responsive_config.dart';
 import '../../service/controller.dart';
-import '../../state/ui_manager.dart';
-import '../screens/cart.dart';
+import '../../service/state/ui_manager.dart';
+import '../screens/purchase_screens/cart.dart';
 import '../widgets/deal_item.dart';
 import '../widgets/empty_state.dart';
 import 'adminextra/admin_extra.dart';

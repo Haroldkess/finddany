@@ -1,3 +1,4 @@
+
 import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
@@ -14,7 +15,7 @@ import 'package:shoppingyou/service/database_service.dart';
 import 'package:shoppingyou/service/firebase_auth.dart';
 
 import '../models/order_model.dart';
-import '../state/ui_manager.dart';
+import 'state/ui_manager.dart';
 
 class Controls {
   static Future<bool> validateForm(context) async {
@@ -196,7 +197,7 @@ class Controls {
 
     if (postTracker) {
       provider.load(false);
-      showToast('Product Added To Cart Successfully!', successBlue);
+      showToast2(context, 'Product Added To Cart Successfully!', isError: false);
 
       // ignore: use_build_context_synchronously
       await cartCollectionControl(context);
@@ -371,7 +372,7 @@ class Controls {
 
     if (deleteTracker) {
       provider.load(false);
-      showToast('Item deleted successfully !', successBlue);
+      showToast2(context,'Item deleted successfully !', isError: false);
     }
 
     return deleteTracker;
@@ -500,37 +501,34 @@ class Utility {
         bool sendOrder = await DatabaseService.makeOrder(context);
         if (sendOrder) {
           provider.load(false);
-          // ignore: use_build_context_synchronously
           Navigator.pop(context);
-          showToast(
-              'Charge was successful. Ref: ${res.reference}', successBlue);
-          showToast('Order Completed succseffully ', successBlue);
+          // showToast(
+          //     'Charge was successful. Ref: ${res.reference}', successBlue);
+       
+          showToast2(context, 'Order Completed succseffully ', isError: false);
         } else {
-          showToast('waiting for network do not Exit page  ', errorRed);
-          // ignore: use_build_context_synchronously
+          showToast2(context, 'waiting for network do not Exit page  ', isError: false);
+        
           bool sendOrder = await DatabaseService.makeOrder(context);
           if (sendOrder) {
             provider.load(false);
-            // ignore: use_build_context_synchronously
+        
             Navigator.pop(context);
-            showToast(
-                'Charge was successful. Ref: ${res.reference}', successBlue);
-            showToast('Order Completed succseffully ', successBlue);
+            // showToast(
+            //     'Charge was successful. Ref: ${res.reference}', successBlue);
+            showToast2(context, 'Order Completed succseffully ', isError: false);
           }
         }
       } else {
         provider.load(false);
-        // ignore: use_build_context_synchronously
         Navigator.pop(context);
-        showToast('Failed: ${res.message}', errorRed);
+        showToast2(context, 'Failed: ${res.message}', isError: true);
       }
     } catch (error) {
       provider.load(false);
-      // ignore: use_build_context_synchronously
       Navigator.pop(context);
       print('Payment Error ==> $error');
     }
-    // ignore: use_build_context_synchronously
     Navigator.pop(context);
     provider.load(false);
   }

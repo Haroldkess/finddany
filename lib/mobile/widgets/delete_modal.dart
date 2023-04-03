@@ -14,7 +14,7 @@ import 'package:shoppingyou/models/order_model.dart';
 import 'package:shoppingyou/responsive/responsive_config.dart';
 import 'package:shoppingyou/service/constant.dart';
 import 'package:shoppingyou/service/controller.dart';
-import 'package:shoppingyou/state/ui_manager.dart';
+import 'package:shoppingyou/service/state/ui_manager.dart';
 
 import '../../service/firebase_auth.dart';
 import 'address_form.dart';
@@ -77,7 +77,7 @@ class Modals {
                       : Button(
                           text: 'Cancel',
                           color: Colors.blue.shade900,
-                          width: 200,
+                          width: 150,
                           onClick: () async {
                             Navigator.pop(context);
                           },
@@ -97,7 +97,7 @@ class Modals {
                       : Button(
                           text: 'Delete',
                           color: Colors.red,
-                          width: 200,
+                          width: 150,
                           onClick: () async {
                             bool returned =
                                 await Controls.deleteCartItem(context, id);

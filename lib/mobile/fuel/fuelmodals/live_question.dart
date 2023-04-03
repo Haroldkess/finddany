@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shoppingyou/mobile/widgets/toast.dart';
 import 'package:shoppingyou/service/constant.dart';
-import 'package:shoppingyou/state/fuel_manager.dart';
-import 'package:shoppingyou/state/ui_manager.dart';
+import 'package:shoppingyou/service/state/fuel_manager.dart';
+import 'package:shoppingyou/service/state/ui_manager.dart';
 
 class FuelLiveIn extends StatefulWidget {
   FuelLiveIn({Key? key}) : super(key: key);

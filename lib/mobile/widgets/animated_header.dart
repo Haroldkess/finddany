@@ -2,7 +2,7 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shoppingyou/designParams/params.dart';
-import 'package:shoppingyou/state/ui_manager.dart';
+import 'package:shoppingyou/service/state/ui_manager.dart';
 
 import '../../responsive/responsive_config.dart';
 import 'clock.dart';

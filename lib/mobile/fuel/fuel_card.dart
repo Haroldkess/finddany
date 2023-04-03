@@ -7,7 +7,7 @@ import 'package:shoppingyou/mobile/fuel/fuelmodals/fuel_modal.dart';
 import 'package:shoppingyou/mobile/widgets/button.dart';
 import 'package:shoppingyou/mobile/widgets/toast.dart';
 import 'package:shoppingyou/service/constant.dart';
-import 'package:shoppingyou/state/fuel_manager.dart';
+import 'package:shoppingyou/service/state/fuel_manager.dart';
 
 import '../../service/controller.dart';
 
@@ -105,31 +105,39 @@ class _FuelCardState extends State<FuelCard> {
                       onPressed: () async {
                         bool value =
                             await Controls.checkEnable(context, 'oneGod1997');
+                        // ignore: use_build_context_synchronously
                         bool gotten = await FuelControl.getFuelValues(context);
 
                         if (value == false) {
-                          showToast('We are closed kindly come back tomorrow',
-                              errorRed);
+                          // ignore: use_build_context_synchronously
+                          showToast2(context,
+                              'We are closed kindly come back tomorrow',
+                              isError: true);
                           return;
                         }
 
                         if (gotten) {
-                          showToast(
-                              "Fuel meters gotten successfully", successBlue);
+                          // ignore: use_build_context_synchronously
+                          showToast2(context, "Fuel meters gotten successfully",
+                              isError: false);
                           // ignore: use_build_context_synchronously
                           if (Provider.of<FuelManager>(context, listen: false)
                                   .availableLitres <
                               5) {
-                            showToast(
+                            // ignore: use_build_context_synchronously
+                            showToast2(context,
                                 "We are Low on fuel kindly check in Next time",
-                                errorRed);
+                                isError: true);
                             return;
-                          } else { FuelModal.fuelModal(context, controller);}
-
-                         
+                          } else {
+                            // ignore: use_build_context_synchronously
+                            FuelModal.fuelModal(context, controller);
+                          }
                         } else {
-                          showToast("Can't get fuel meters at the moment..",
-                              errorRed);
+                          // ignore: use_build_context_synchronously
+                          showToast2(
+                              context, "Can't get fuel meters at the moment..",
+                              isError: true);
                           return;
                         }
                       },

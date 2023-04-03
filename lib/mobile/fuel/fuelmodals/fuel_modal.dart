@@ -4,12 +4,12 @@ import 'package:provider/provider.dart';
 import 'package:shoppingyou/mobile/fuel/fuelcontrol/fuel_control.dart';
 import 'package:shoppingyou/mobile/fuel/fuelmodals/fuel_param.dart';
 import 'package:shoppingyou/mobile/fuel/fuelmodals/live_question.dart';
-import 'package:shoppingyou/mobile/screens/cart.dart';
-import 'package:shoppingyou/state/fuel_manager.dart';
+import 'package:shoppingyou/service/state/fuel_manager.dart';
 
 import '../../../service/constant.dart';
 import '../../../service/controller.dart';
-import '../../../state/ui_manager.dart';
+import '../../../service/state/ui_manager.dart';
+import '../../screens/purchase_screens/cart.dart';
 import '../../widgets/address_form.dart';
 import '../../widgets/button.dart';
 import '../../widgets/phone_form.dart';
@@ -162,18 +162,28 @@ class FuelModal {
                         width: 200,
                         height: 50,
                         onClick: () async {
+                          if (_Uiprovider.name == 'null' ||
+                              _Uiprovider.phoneNumber == 'null' ||
+                              _Uiprovider.address == 'null') {
+                            showToast2(
+                                context, 'Please add a valid shipping info',
+                                isError: true);
+                            return;
+                          }
                           if (_provider.selectedLires < 5) {
-                            showToast("Liters cannot be less than 5", errorRed);
+                            showToast2(context, "Liters cannot be less than 5",
+                                isError: true);
                             return;
                           }
                           if (_provider.liveIn.isEmpty) {
-                            showToast("Please complete form", errorRed);
+                            showToast2(context, "Please complete form",
+                                isError: true);
                             return;
                           }
                           if (_provider.liveIn == "No") {
-                            showToast(
+                            showToast2(context,
                                 "Sorry this feature is not available in your region",
-                                errorRed);
+                                isError: true);
                             return;
                           } else {
                             await FuelControl.makePayment(

@@ -2,8 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shoppingyou/service/constant.dart';
-
-import '../screens/homeSplash.dart';
+import '../screens/home/homeSplash.dart';
 import '../screens/splashscreen.dart';
 
 class Loading extends StatefulWidget {

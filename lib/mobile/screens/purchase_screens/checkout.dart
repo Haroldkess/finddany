@@ -12,12 +12,11 @@ import 'package:shoppingyou/responsive/responsive_config.dart';
 import 'package:shoppingyou/service/constant.dart';
 import 'package:shoppingyou/service/controller.dart';
 import 'package:shoppingyou/service/database_service.dart';
-import 'package:shoppingyou/state/ui_manager.dart';
+import 'package:shoppingyou/service/state/ui_manager.dart';
 
-import '../../designParams/params.dart';
-import '../widgets/button.dart';
-import '../widgets/payment_modal.dart';
-import '../widgets/shiping_information.dart';
+import '../../../designParams/params.dart';
+import '../../widgets/button.dart';
+import '../../widgets/shiping_information.dart';
 
 // Carrito de compras
 class Checkout extends StatefulWidget {
@@ -203,13 +202,15 @@ class _CheckoutState extends State<Checkout> {
             LargeButton(
               text: 'Confirm and pay',
               onClick: () async {
-                showToast("Please wait", successBlue);
+              //  showToast("Please wait", successBlue);
                 await DatabaseService.getDeliveryPrices(context);
+                // ignore: use_build_context_synchronously
                 if (Provider.of<UiProvider>(context, listen: false)
                     .locationType
                     .isEmpty) {
-                  showToast("Kindly select delivery type", errorRed);
+                  showToast2(context,"Kindly select delivery type", isError: true);
                 } else {
+                  // ignore: use_build_context_synchronously
                   liveIn(context);
                 }
               },

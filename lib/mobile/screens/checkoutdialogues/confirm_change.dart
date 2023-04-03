@@ -6,7 +6,7 @@ import 'package:shoppingyou/mobile/widgets/toast.dart';
 
 import '../../../service/constant.dart';
 import '../../../service/controller.dart';
-import '../../../state/ui_manager.dart';
+import '../../../service/state/ui_manager.dart';
 import '../../widgets/address_form.dart';
 import '../../widgets/button.dart';
 import '../../widgets/phone_form.dart';
@@ -143,7 +143,7 @@ Future<void> confirmLocation(BuildContext context) async {
                       if (_provider.name == 'null' ||
                           _provider.phoneNumber == 'null' ||
                           _provider.address == 'null') {
-                        showToast('Please add a valid shipping info', errorRed);
+                        showToast2(context,'Please add a valid shipping info', isError: true);
                         return;
                       }
                       showModalBottomSheet<void>(

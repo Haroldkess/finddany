@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:shoppingyou/mobile/screens/singleitemscreen.dart';
+import 'package:shoppingyou/mobile/screens/product/singleitemscreen.dart';
 import 'package:shoppingyou/models/prod_model.dart';
 import 'package:shoppingyou/service/constant.dart';
 

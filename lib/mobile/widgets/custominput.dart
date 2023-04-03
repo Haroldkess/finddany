@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shoppingyou/service/constant.dart';
 
-import '../../state/ui_manager.dart';
+import '../../service/state/ui_manager.dart';
 
 class CustomInput extends StatelessWidget {
   const CustomInput({Key? key}) : super(key: key);

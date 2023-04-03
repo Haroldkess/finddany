@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../state/ui_manager.dart';
+import '../../service/state/ui_manager.dart';
 
 class CreditCard extends StatelessWidget {
   const CreditCard({Key? key}) : super(key: key);

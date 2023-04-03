@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shoppingyou/service/constant.dart';
-import 'package:shoppingyou/state/ui_manager.dart';
+import 'package:shoppingyou/service/state/ui_manager.dart';
 
 class FeedBackForm extends StatelessWidget {
   final TextEditingController controller;

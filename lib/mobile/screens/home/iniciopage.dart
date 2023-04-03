@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shoppingyou/mobile/fuel/fuel_card.dart';
 
-import 'package:shoppingyou/mobile/screens/searchscreen.dart';
+import 'package:shoppingyou/mobile/screens/home/searchscreen.dart';
 import 'package:shoppingyou/mobile/widgets/animated_header.dart';
 import 'package:shoppingyou/mobile/widgets/banner.dart';
 import 'package:shoppingyou/mobile/widgets/category_chips.dart';
@@ -16,16 +16,16 @@ import 'package:shoppingyou/responsive/responsive_config.dart';
 import 'package:shoppingyou/service/constant.dart';
 import 'package:shoppingyou/service/controller.dart';
 import 'package:shoppingyou/service/database_service.dart';
-import 'package:shoppingyou/state/ui_manager.dart';
+import 'package:shoppingyou/service/state/ui_manager.dart';
 
-import '../../models/user_model.dart';
-import '../../state/fuel_manager.dart';
-import '../fuel/fuelcontrol/fuel_control.dart';
-import '../fuel/fuelmodals/fuel_modal.dart';
-import '../widgets/drawer.dart';
-import '../widgets/empty_state.dart';
-import '../widgets/toast.dart';
-import '../widgets/vendor_info.dart';
+import '../../../models/user_model.dart';
+import '../../../service/state/fuel_manager.dart';
+import '../../fuel/fuelcontrol/fuel_control.dart';
+import '../../fuel/fuelmodals/fuel_modal.dart';
+import '../../widgets/drawer.dart';
+import '../../widgets/empty_state.dart';
+import '../../widgets/toast.dart';
+import '../../widgets/vendor_info.dart';
 
 class InicioPage extends StatefulWidget {
   final String? name;
@@ -146,33 +146,7 @@ class _InicioPageState extends State<InicioPage> {
       body: Stack(
         //    alignment: Alignment.centerRight,
         children: [
-          Responsive.isMobile(context) || Responsive.isMobileLarge(context)
-              ? const SizedBox.shrink()
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(
-                          left: Responsive.isDesktop(context) ? 250 : 50),
-                      child: const Image(
-                          image: AssetImage('assets/images/EllipseMorado.png')),
-                    ),
-                    ShaderMask(
-                        shaderCallback: (rect) {
-                          return const LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: FractionalOffset.center,
-                            colors: [Colors.black, Colors.transparent],
-                          ).createShader(rect);
-                        },
-                        blendMode: BlendMode.dstIn,
-                        child: const Image(
-                            image:
-                                AssetImage('assets/images/EllipseMorado.png'),
-                            fit: BoxFit.contain)),
-                  ],
-                ),
-
+  
           Container(
               child: Padding(
                   padding: const EdgeInsets.fromLTRB(0.0, 3.0, 0.0, 0.0),

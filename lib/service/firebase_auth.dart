@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:shoppingyou/main.dart';
 import 'package:shoppingyou/mobile/widgets/toast.dart';
 import 'package:shoppingyou/service/constant.dart';
-import 'package:shoppingyou/state/ui_manager.dart';
+import 'package:shoppingyou/service/state/ui_manager.dart';
 
 class AuthService {
   static final _auth = FirebaseAuth.instance;

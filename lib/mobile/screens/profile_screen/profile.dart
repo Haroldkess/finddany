@@ -3,12 +3,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shoppingyou/designParams/params.dart';
-import 'package:shoppingyou/mobile/screens/no_history.dart';
 import 'package:shoppingyou/mobile/widgets/delete_modal.dart';
 import 'package:shoppingyou/responsive/responsive_config.dart';
 import 'package:shoppingyou/service/constant.dart';
 import 'package:shoppingyou/service/controller.dart';
-import 'package:shoppingyou/state/ui_manager.dart';
+import 'package:shoppingyou/service/state/ui_manager.dart';
+
+import '../other_screens/no_history.dart';
 
 class Profile extends StatelessWidget {
   const Profile({Key? key}) : super(key: key);

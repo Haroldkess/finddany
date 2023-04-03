@@ -1,7 +1,8 @@
 
 import 'package:flutter/material.dart';
 
-import '../widgets/empty_state.dart';
+import '../../widgets/empty_state.dart';
+
 
 class NoFavorites extends StatelessWidget {
   const NoFavorites({Key? key}) : super(key: key);

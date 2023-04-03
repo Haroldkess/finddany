@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shoppingyou/responsive/responsive_config.dart';
 import 'package:shoppingyou/service/constant.dart';
 import 'package:shoppingyou/service/controller.dart';
-import 'package:shoppingyou/state/ui_manager.dart';
+import 'package:shoppingyou/service/state/ui_manager.dart';
 
 class CategoryChips extends StatefulWidget {
   const CategoryChips({Key? key}) : super(key: key);

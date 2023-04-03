@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shoppingyou/state/ui_manager.dart';
+import 'package:shoppingyou/service/state/ui_manager.dart';
 import '../../responsive/responsive_config.dart';
 import '../../service/controller.dart';
-import '../screens/cart.dart';
+import '../screens/purchase_screens/cart.dart';
 import '../widgets/empty_state.dart';
 import '../widgets/fuel_widget.dart';
 

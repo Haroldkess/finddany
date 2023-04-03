@@ -21,7 +21,7 @@ import 'package:shoppingyou/service/controller.dart';
 
 import '../../models/prod_model.dart';
 import '../../responsive/responsive_config.dart';
-import '../../state/ui_manager.dart';
+import '../../service/state/ui_manager.dart';
 import '../widgets/toast.dart';
 
 class AddProduct extends StatefulWidget {

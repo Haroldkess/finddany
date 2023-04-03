@@ -3,18 +3,15 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shoppingyou/mobile/screens/profile.dart';
-import 'package:shoppingyou/mobile/screens/searchscreen.dart';
+import 'package:shoppingyou/mobile/screens/profile_screen/profile.dart';
+import 'package:shoppingyou/mobile/screens/purchase_screens/cart.dart';
+import 'package:shoppingyou/mobile/screens/home/searchscreen.dart';
 import 'package:shoppingyou/models/user_model.dart';
 import 'package:shoppingyou/service/constant.dart';
 import 'package:shoppingyou/service/database_service.dart';
-import 'package:shoppingyou/state/ui_manager.dart';
-
-import '../../service/controller.dart';
-import 'cart.dart';
+import 'package:shoppingyou/service/state/ui_manager.dart';
+import '../other_screens/no_history.dart';
 import 'iniciopage.dart';
-import 'no_favorites.dart';
-import 'no_history.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -83,7 +80,7 @@ class _HomeState extends State {
 
   int _currentIndex = 0;
 
-  List _children = [
+  final List _children =  const [
     InicioPage(),
     InicioPage(),
     InicioPage(),

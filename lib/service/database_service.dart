@@ -15,7 +15,7 @@ import 'package:shoppingyou/models/order_model.dart';
 import 'package:shoppingyou/models/prod_model.dart';
 import 'package:shoppingyou/models/user_model.dart';
 import 'package:shoppingyou/service/constant.dart';
-import 'package:shoppingyou/state/ui_manager.dart';
+import 'package:shoppingyou/service/state/ui_manager.dart';
 import 'package:uuid/uuid.dart';
 
 FirebaseFirestore init = FirebaseFirestore.instance;

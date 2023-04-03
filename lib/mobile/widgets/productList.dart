@@ -6,7 +6,7 @@ import 'package:shoppingyou/responsive/responsive_config.dart';
 
 import '../../models/fake_user.dart';
 import '../../models/prod_model.dart';
-import '../../state/ui_manager.dart';
+import '../../service/state/ui_manager.dart';
 import 'carditem.dart';
 import 'caroussel.dart';
 import 'category_card.dart';

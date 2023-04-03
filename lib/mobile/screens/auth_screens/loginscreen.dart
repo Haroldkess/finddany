@@ -2,18 +2,16 @@ import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:shoppingyou/mobile/widgets/delete_modal.dart';
 import 'package:shoppingyou/mobile/widgets/toast.dart';
 import 'package:shoppingyou/responsive/responsive_config.dart';
 import 'package:shoppingyou/service/constant.dart';
 import 'package:shoppingyou/service/controller.dart';
-
-import '../../state/ui_manager.dart';
-import '../widgets/custominput.dart';
-import '../widgets/custompassword.dart';
-import '../widgets/headline.dart';
+import '../../../service/state/ui_manager.dart';
+import '../../widgets/custominput.dart';
+import '../../widgets/custompassword.dart';
+import '../../widgets/headline.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);

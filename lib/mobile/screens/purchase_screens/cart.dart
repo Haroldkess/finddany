@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shoppingyou/service/controller.dart';
 import 'package:shoppingyou/service/database_service.dart';
-import 'package:shoppingyou/state/ui_manager.dart';
+import 'package:shoppingyou/service/state/ui_manager.dart';
 
-import '../../designParams/params.dart';
-import '../../responsive/responsive_config.dart';
-import '../../service/constant.dart';
-import '../widgets/button.dart';
-import '../widgets/cart_item.dart';
-import '../widgets/toast.dart';
+import '../../../designParams/params.dart';
+import '../../../responsive/responsive_config.dart';
+import '../../../service/constant.dart';
+import '../../widgets/button.dart';
+import '../../widgets/cart_item.dart';
+import '../../widgets/toast.dart';
 import 'checkout.dart';
 
 // Carrito de compras
@@ -64,17 +64,17 @@ class _CartState extends State<Cart> {
           ),
         ),
         actions: <Widget>[
-          IconButton(
-            icon: const Icon(
-              Icons.delete_outline,
-              size: 28,
-              color: Color(0xFFFA4A0C),
-            ),
-            onPressed: () {
-              // do something
-            },
-          ),
-          const SizedBox(width: 8)
+          // IconButton(
+          //   icon: const Icon(
+          //     Icons.delete_outline,
+          //     size: 28,
+          //     color: Color(0xFFFA4A0C),
+          //   ),
+          //   onPressed: () {
+          //     // do something
+          //   },
+          // ),
+          // const SizedBox(width: 8)
         ],
       ),
       body: Stack(
@@ -182,10 +182,12 @@ class _CartState extends State<Cart> {
                           await Controls.checkEnable(context, 'oneGod1997');
 
                       if (value == false) {
-                        showToast('We are closed kindly come back tomorrow',
-                            errorRed);
+                        // ignore: use_build_context_synchronously
+                        showToast2(context, 'We are closed kindly come back tomorrow',
+                            isError: true);
                         return;
                       }
+                      // ignore: use_build_context_synchronously
                       Navigator.of(context).push(
                         MaterialPageRoute(builder: (context) => Checkout()),
                       );
@@ -357,14 +359,16 @@ class FuelAlertError extends StatelessWidget {
               onPressed: () {},
               iconSize: 28,
             ),
-            const Text(
-              'Incorrect phone number can delay delivery',
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 10,
-              ),
-            ),
-            SizedBox(width: 12)
+             const Expanded(
+               child: Text(
+                'Incorrect phone number can delay delivery',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 10,
+                ),
+                         ),
+             ),
+           
           ],
         ),
       ),

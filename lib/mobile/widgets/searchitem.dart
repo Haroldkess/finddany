@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:shoppingyou/models/prod_model.dart';
 
-import '../screens/singleitemscreen.dart';
+import '../screens/product/singleitemscreen.dart';
 
 class SearchItem extends StatelessWidget {
   final ProductModel model;

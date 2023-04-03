@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shoppingyou/service/controller.dart';
-import 'package:shoppingyou/state/ui_manager.dart';
+import 'package:shoppingyou/service/state/ui_manager.dart';
 
 import '../../designParams/params.dart';
 import 'button.dart';
@@ -56,7 +56,7 @@ class PaymentModal extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 40),
-              CreditCard(),
+            //  CreditCard(),
               const SizedBox(height: 60),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

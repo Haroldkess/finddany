@@ -5,10 +5,10 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shoppingyou/responsive/responsive_config.dart';
 import 'package:shoppingyou/service/controller.dart';
-import 'package:shoppingyou/state/ui_manager.dart';
+import 'package:shoppingyou/service/state/ui_manager.dart';
 
-import '../widgets/carditem.dart';
-import '../widgets/searchitem.dart';
+import '../../widgets/carditem.dart';
+import '../../widgets/searchitem.dart';
 
 class GlobalData {
   static String datosusuario = '';

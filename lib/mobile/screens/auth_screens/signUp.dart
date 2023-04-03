@@ -5,15 +5,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shoppingyou/responsive/responsive_config.dart';
-import 'package:shoppingyou/state/ui_manager.dart';
+import 'package:shoppingyou/service/state/ui_manager.dart';
 
-import '../../service/constant.dart';
-import '../../service/controller.dart';
-import '../widgets/custominput.dart';
-import '../widgets/custompassword.dart';
-import '../widgets/headline.dart';
-import '../widgets/name.dart';
-import '../widgets/toast.dart';
+import '../../../service/constant.dart';
+import '../../../service/controller.dart';
+import '../../widgets/custominput.dart';
+import '../../widgets/custompassword.dart';
+import '../../widgets/headline.dart';
+import '../../widgets/name.dart';
+import '../../widgets/toast.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({Key? key}) : super(key: key);
@@ -27,8 +27,9 @@ class _SignUpState extends State<SignUp> {
 
   @override
   Widget build(BuildContext context) {
+  UiProvider stream =  context.watch<UiProvider>();
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       backgroundColor: const Color(0xff5956E9),
       body: SingleChildScrollView(
         child: Column(
@@ -52,8 +53,6 @@ class _SignUpState extends State<SignUp> {
                         fit: BoxFit.contain)),
               ],
             ),
-           
-           
             FadeInDown(
               animate: true,
               duration: const Duration(milliseconds: 500),
@@ -65,8 +64,8 @@ class _SignUpState extends State<SignUp> {
             FadeInLeft(
               animate: true,
               duration: const Duration(milliseconds: 1000),
-              child:  Padding(
-                padding:  const EdgeInsets.fromLTRB(0, 0, 0, 0),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                 child: Text(
                   'Lets get you started',
                   style: TextStyle(
@@ -113,16 +112,20 @@ class _SignUpState extends State<SignUp> {
                         const CustomName(),
                         const CustomInput(),
                         const CustomPassword(),
-                       const SizedBox(height: 50,),
+                        const SizedBox(
+                          height: 50,
+                        ),
                         ElevatedButton(
                             onPressed: () async {
-                               bool check = await Controls.validateForm2(context);
-                                     if (check == false) {
-                                showToast('Please fill in the form properly. ',errorRed);
+                              bool check =
+                                  await Controls.validateForm2(context);
+                              if (check == false) {
+                                showToast('Please fill in the form properly. ',
+                                    errorRed);
                                 print('incorrect');
                                 return;
                               }
-                               print('auth user');
+                              print('auth user');
                               bool doThis =
                                   // ignore: use_build_context_synchronously
                                   await Controls.authUserSignUp(context);
@@ -130,23 +133,19 @@ class _SignUpState extends State<SignUp> {
                               if (doThis) {
                                 // ignore: use_build_context_synchronously
                                 Navigator.pushReplacementNamed(context, "/");
-                              } else {
-
-                              }
+                              } else {}
                             },
                             style: ElevatedButton.styleFrom(
                                 primary: const Color(0xff5956E9),
                                 fixedSize: const Size(314.0, 70.0),
                                 onPrimary: Colors.white,
                                 shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.circular(10.0)),
+                                    borderRadius: BorderRadius.circular(10.0)),
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 22),
                                 textStyle: const TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w700)),
-                            child: context.watch<UiProvider>().isLoading
+                                    fontSize: 20, fontWeight: FontWeight.w700)),
+                            child: stream.isLoading
                                 ? const CupertinoActivityIndicator(
                                     color: Colors.white,
                                     radius: 30,

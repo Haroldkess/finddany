@@ -9,11 +9,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shoppingyou/mobile/screens/splashscreen.dart';
 import 'package:shoppingyou/service/constant.dart';
 import 'package:shoppingyou/service/controller.dart';
-import 'package:shoppingyou/state/ui_manager.dart';
+import 'package:shoppingyou/service/state/ui_manager.dart';
 
-import '../../models/user_model.dart';
-import '../../service/database_service.dart';
-import '../widgets/drawer.dart';
+import '../../../models/user_model.dart';
+import '../../../service/database_service.dart';
+import '../../widgets/drawer.dart';
 import 'homescreen.dart';
 
 class HomeSplash extends StatefulWidget {
@@ -179,52 +179,54 @@ class _HomeSplashState extends State<HomeSplash> {
             children: [
               Stack(
                 alignment: Alignment.center,
-                children: [
-                  FadeInUp(
-                    duration: Duration(milliseconds: 500),
-                    child: Container(
-                      width: double.infinity,
-                      height: 300,
-                      padding: EdgeInsets.all(90.0),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.blue.shade900,
-                        border:
-                            Border.all(color: Colors.blue.shade900, width: 2.0),
-                      ),
-                      child: Stack(
-                        children: [
-                          for (double i = 0; i < 360; i += 60)
-                            AnimChain(
-                                    initialDelay:
-                                        Duration(milliseconds: i.toInt()))
-                                .next(
-                                  wait: Duration(milliseconds: 1000),
-                                  widget: AnimatedAlignPositioned(
-                                    dx: 0,
-                                    dy: 150,
-                                    duration: Duration(seconds: 1),
-                                    rotateDegrees: 0,
-                                    touch: Touch.middle,
-                                    child: user(0, i),
-                                  ),
-                                )
-                                .next(
-                                  wait: Duration(seconds: 2),
-                                  widget: AnimatedAlignPositioned(
-                                    dx: i / 560,
-                                    dy: 150,
-                                    duration: Duration(seconds: 1),
-                                    rotateDegrees: i,
-                                    touch: Touch.middle,
-                                    child: user(0, i),
-                                  ),
-                                ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const Center(
+                children:  const [
+                  // FadeInUp(
+                  //   duration: Duration(milliseconds: 500),
+                  //   child: Container(
+                  //     width: double.infinity,
+                  //     height: 300,
+                  //     padding: EdgeInsets.all(90.0),
+                  //     decoration: BoxDecoration(
+                  //       shape: BoxShape.circle,
+                  //       color: Colors.blue.shade900,
+                  //       border:
+                  //           Border.all(color: Colors.blue.shade900, width: 2.0),
+                  //     ),
+                  //     child: Stack(
+                  //       children: [
+                  //         for (double i = 0; i < 360; i += 60)
+                  //           AnimChain(
+                  //                   initialDelay:
+                  //                       Duration(milliseconds: i.toInt()))
+                  //               .next(
+                  //                 wait: Duration(milliseconds: 1000),
+                  //                 widget: AnimatedAlignPositioned(
+                  //                   dx: 0,
+                  //                   dy: 150,
+                  //                   duration: Duration(seconds: 1),
+                  //                   rotateDegrees: 0,
+                  //                   touch: Touch.middle,
+                  //                   child: user(0, i),
+                  //                 ),
+                  //               )
+                  //               .next(
+                  //                 wait: Duration(seconds: 2),
+                  //                 widget: AnimatedAlignPositioned(
+                  //                   dx: i / 560,
+                  //                   dy: 150,
+                  //                   duration: Duration(seconds: 1),
+                  //                   rotateDegrees: i,
+                  //                   touch: Touch.middle,
+                  //                   child: user(0, i),
+                  //                 ),
+                  //               ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
+                  
+                  
+                   Center(
                     child: CupertinoActivityIndicator(
                       color: Colors.white,
                       radius: 30,
@@ -237,31 +239,24 @@ class _HomeSplashState extends State<HomeSplash> {
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    'Shopping ',
+                children: const  [
+                   Text(
+                    'Findd ',
                     style: TextStyle(
                         fontFamily: 'Raleway',
                         color: Colors.white,
                         fontSize: 25.0,
                         fontWeight: FontWeight.w700),
                   ),
-                  const Text(
-                    'Made ',
+                   Text(
+                    'Any ',
                     style: TextStyle(
                         fontFamily: 'Raleway',
                         color: Colors.red,
                         fontSize: 25.0,
                         fontWeight: FontWeight.w700),
                   ),
-                  const Text(
-                    'Easy!!!',
-                    style: TextStyle(
-                        fontFamily: 'Raleway',
-                        color: Colors.red,
-                        fontSize: 25.0,
-                        fontWeight: FontWeight.w700),
-                  ),
+        
                 ],
               ),
             ],

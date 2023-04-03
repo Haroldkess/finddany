@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shoppingyou/mobile/widgets/carditem.dart';
 
-import '../../state/ui_manager.dart';
+import '../../service/state/ui_manager.dart';
 
 class Caroussel extends StatelessWidget {
   const Caroussel({Key? key}) : super(key: key);

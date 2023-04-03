@@ -4,7 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shoppingyou/mobile/widgets/delete_modal.dart';
 
-import '../../state/ui_manager.dart';
+import '../../service/state/ui_manager.dart';
 
 class AppDrawer extends StatefulWidget {
   final Widget child;

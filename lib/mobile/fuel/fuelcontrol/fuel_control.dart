@@ -6,12 +6,12 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shoppingyou/mobile/widgets/toast.dart';
 import 'package:shoppingyou/service/constant.dart';
-import 'package:shoppingyou/state/fuel_manager.dart';
+import 'package:shoppingyou/service/state/fuel_manager.dart';
 
 class FuelControl {
   static Future<bool> getFuelValues(BuildContext context) async {
     late bool isFinished;
-    showToast("Getting Fuel Meters Please wait...", successBlue);
+    showToast2(context, "Getting Fuel Meters Please wait...", isError: false);
     FuelManager fuel = Provider.of<FuelManager>(context, listen: false);
 
     try {
@@ -38,7 +38,7 @@ class FuelControl {
     late bool isFinished;
     FuelManager fuel = Provider.of<FuelManager>(context, listen: false);
     SharedPreferences pref = await SharedPreferences.getInstance();
-    showToast("Fuel Pump is running please wait...", successBlue);
+    showToast2(context, "Fuel Pump is running please wait...", isError: false);
 
     //fuel.isLoading(true);
 
@@ -121,27 +121,27 @@ class FuelControl {
           provider.isLoading(false);
           // ignore: use_build_context_synchronously
         //  Navigator.pop(context);
-          showToast(
-              'Charge was successful. Ref: ${res.reference}', successBlue);
-          showToast('Order Completed succseffully ', successBlue);
+          // showToast(
+          //     'Charge was successful. Ref: ${res.reference}', successBlue);
+          showToast2(context, 'Order Completed successfully ', isError: false);
         } else {
-          showToast('waiting for network do not Exit page  ', errorRed);
+          showToast2(context,'waiting for network do not Exit page  ', isError: false);
           // ignore: use_build_context_synchronously
           bool sendOrder = await pumpFuel(context, provider.selectedLires.toInt(),comment);
           if (sendOrder) {
             provider.isLoading(false);
             // ignore: use_build_context_synchronously
             Navigator.pop(context);
-            showToast(
-                'Charge was successful. Ref: ${res.reference}', successBlue);
-            showToast('Order Completed succseffully ', successBlue);
+            // showToast2(context,
+            //     'Charge was successful. Ref: ${res.reference}', isError: false);
+             showToast2(context,'Order Completed successfully ', isError: false);
           }
         }
       } else {
         provider.isLoading(false);
         // ignore: use_build_context_synchronously
     //   Navigator.pop(context);
-        showToast('Failed: ${res.message}', errorRed);
+        showToast2(context,'Failed: ${res.message}', isError: true);
       }
     } catch (error) {
       provider.isLoading(false);

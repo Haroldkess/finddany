@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shoppingyou/responsive/responsive_config.dart';
 
-import '../../state/ui_manager.dart';
-import '../screens/singleitemscreen.dart';
+import '../../service/state/ui_manager.dart';
+import '../screens/product/singleitemscreen.dart';
 
 class PoppingProduct extends StatefulWidget {
   const PoppingProduct({Key? key}) : super(key: key);

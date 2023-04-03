@@ -10,12 +10,12 @@ import 'package:shoppingyou/mobile/widgets/button.dart';
 import 'package:shoppingyou/mobile/widgets/toast.dart';
 import 'package:shoppingyou/responsive/responsive_config.dart';
 import 'package:shoppingyou/service/constant.dart';
-import 'package:shoppingyou/state/ui_manager.dart';
+import 'package:shoppingyou/service/state/ui_manager.dart';
 
-import '../../designParams/params.dart';
-import '../../models/prod_model.dart';
-import '../../service/controller.dart';
-import '../widgets/buttonmini.dart';
+import '../../../designParams/params.dart';
+import '../../../models/prod_model.dart';
+import '../../../service/controller.dart';
+import '../../widgets/buttonmini.dart';
 
 class SingleItem extends StatefulWidget {
   final ProductModel? product;
@@ -402,29 +402,29 @@ class _SingleItemState extends State<SingleItem> {
                                                     context, 'oneGod1997');
 
                                             if (value == false) {
-                                              showToast(
+                                              showToast2(context,
                                                   'We are closed kindly come back tomorrow',
-                                                  errorRed);
+                                                  isError: true);
                                               return;
                                             }
 
                                             if (widget.product!.stock! < 1) {
-                                              showToast(
-                                                  'Out of stock', errorRed);
+                                              showToast2(context,
+                                                  'Out of stock', isError: true);
                                               return;
                                             }
                                             if (widget.product!.color!
                                                     .isNotEmpty &&
                                                 selectedColor.isEmpty) {
-                                              showToast('Please select a color',
-                                                  errorRed);
+                                              showToast2(context,'Please select a color',
+                                                  isError: true);
                                               return;
                                             }
                                             if (widget.product!.size!
                                                     .isNotEmpty &&
                                                 selectedSize.isEmpty) {
-                                              showToast('Please select a Size',
-                                                  errorRed);
+                                              showToast2(context,'Please select a Size',
+                                                  isError: true);
                                               return;
                                             }
                                             bool doThis =
@@ -445,9 +445,9 @@ class _SingleItemState extends State<SingleItem> {
                                                     widget.product!.userId!);
 
                                             if (doThis) {
-                                              showToast(
+                                              showToast2(context,
                                                   'Kindly continue shopping',
-                                                  successBlue);
+                                                  isError: false);
                                             } else {}
                                           },
                                           height: 60,

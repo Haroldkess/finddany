@@ -2,10 +2,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shoppingyou/designParams/params.dart';
-import 'package:shoppingyou/mobile/screens/singleitemscreen.dart';
+import 'package:shoppingyou/mobile/screens/product/singleitemscreen.dart';
 import 'package:shoppingyou/models/prod_model.dart';
 import 'package:shoppingyou/responsive/responsive_config.dart';
-import 'package:shoppingyou/state/ui_manager.dart';
+import 'package:shoppingyou/service/state/ui_manager.dart';
 
 import '../../models/fake_user.dart';
 

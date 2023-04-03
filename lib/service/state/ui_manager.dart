@@ -7,8 +7,8 @@ import 'package:shoppingyou/models/prod_model.dart';
 import 'package:shoppingyou/models/user_model.dart';
 import 'package:shoppingyou/service/constant.dart';
 
-import '../mobile/fuel/model/fuel_model.dart';
-import '../models/order_model.dart';
+import '../../mobile/fuel/model/fuel_model.dart';
+import '../../models/order_model.dart';
 
 class UiProvider extends ChangeNotifier {
   bool showPassword = false;

@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shoppingyou/mobile/admin/adminextra/order_users.dart';
-
 import '../../responsive/responsive_config.dart';
 import '../../service/controller.dart';
-import '../../state/ui_manager.dart';
-import '../screens/cart.dart';
-import '../widgets/deal_item.dart';
+import '../../service/state/ui_manager.dart';
+import '../screens/purchase_screens/cart.dart';
 import '../widgets/empty_state.dart';
-import 'adminextra/admin_extra.dart';
 
 class AdminOrderPage extends StatefulWidget {
   const AdminOrderPage({super.key});

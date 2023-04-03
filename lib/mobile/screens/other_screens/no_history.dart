@@ -1,20 +1,24 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shoppingyou/state/ui_manager.dart';
-import '../../responsive/responsive_config.dart';
-import '../../service/controller.dart';
-import '../widgets/empty_state.dart';
-import '../widgets/fuel_widget.dart';
-import 'cart.dart';
+import 'package:shoppingyou/mobile/screens/purchase_screens/cart.dart';
+import 'package:shoppingyou/service/state/ui_manager.dart';
 
-class FuelHistory extends StatefulWidget {
-  const FuelHistory({Key? key}) : super(key: key);
+import '../../../responsive/responsive_config.dart';
+import '../../../service/controller.dart';
+import '../../widgets/deal_item.dart';
+import '../../widgets/empty_state.dart';
+
+
+
+class DoneDeals extends StatefulWidget {
+  const DoneDeals({Key? key}) : super(key: key);
 
   @override
-  State<FuelHistory> createState() => _FuelHistoryState();
+  State<DoneDeals> createState() => _DoneDealsState();
 }
 
-class _FuelHistoryState extends State<FuelHistory> {
+class _DoneDealsState extends State<DoneDeals> {
   @override
   void initState() {
     super.initState();
@@ -22,10 +26,10 @@ class _FuelHistoryState extends State<FuelHistory> {
   }
 
   Future getCart(BuildContext context) async {
-    if (Provider.of<UiProvider>(context, listen: false).fuelOrders.isNotEmpty) {
+    if (Provider.of<UiProvider>(context, listen: false).doneDeals.isNotEmpty) {
       return;
     }
-    await Controls.fuelHistoryController(context);
+    await Controls.doneDealsController(context);
   }
 
   @override
@@ -42,7 +46,7 @@ class _FuelHistoryState extends State<FuelHistory> {
           icon: Icon(Icons.arrow_back, color: Colors.black),
         ),
         title: const Text(
-          "Fuel History",
+          "Order History",
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,
@@ -51,10 +55,10 @@ class _FuelHistoryState extends State<FuelHistory> {
         ),
       ),
       body: RefreshIndicator(
-        onRefresh: () => Controls.fuelHistoryController(context),
+        onRefresh: () => Controls.doneDealsController(context),
         child: Stack(
           children: [
-            context.watch<UiProvider>().fuelOrders.isNotEmpty
+            context.watch<UiProvider>().doneDeals.isNotEmpty
                 ? Padding(
                     padding: const EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 20.0),
                     child: ShaderMask(
@@ -79,15 +83,15 @@ class _FuelHistoryState extends State<FuelHistory> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   SizedBox(height: 30),
-                  FuelAlert(),
+                  InfoAlert(),
                   Expanded(
-                    child: context.watch<UiProvider>().fuelOrders.isNotEmpty
+                    child: context.watch<UiProvider>().doneDeals.isNotEmpty
                         ? ListView(
                             children: context
                                 .watch<UiProvider>()
-                                .fuelOrders
+                                .doneDeals
                                 .map(
-                                  (e) => FuelDeals(
+                                  (e) => DealItem(
                                     assetPath: 'assets/images/tablet.png',
                                     title: '2020 Apple iPad Air 10.9"',
                                     price: 579,

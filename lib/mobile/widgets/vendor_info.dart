@@ -1,8 +1,6 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:shoppingyou/designParams/params.dart';
-import 'package:shoppingyou/landingpage/stayhome.dart';
-
 import '../../responsive/responsive_config.dart';
 
 class HowToBeAVendor extends StatefulWidget {
@@ -28,7 +26,7 @@ class _HowToBeAVendorState extends State<HowToBeAVendor> {
       duration: Duration(seconds: 5),
       child: InkWell(
                onTap: () async {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => StayHome()));
+                  //  Navigator.push(context, MaterialPageRoute(builder: (context) => StayHome()));
                   },
         child: Container(
           height: 50,

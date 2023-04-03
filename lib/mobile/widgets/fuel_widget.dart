@@ -9,7 +9,7 @@ import 'package:shoppingyou/models/prod_model.dart';
 import 'package:shoppingyou/service/constant.dart';
 
 import '../../designParams/params.dart';
-import '../../state/ui_manager.dart';
+import '../../service/state/ui_manager.dart';
 
 class FuelDeals extends StatelessWidget {
   final double price;

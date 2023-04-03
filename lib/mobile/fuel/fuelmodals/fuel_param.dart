@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shoppingyou/service/constant.dart';
-import 'package:shoppingyou/state/fuel_manager.dart';
-import 'package:shoppingyou/state/ui_manager.dart';
+import 'package:shoppingyou/service/state/fuel_manager.dart';
+import 'package:shoppingyou/service/state/ui_manager.dart';
 
 class FuelParam extends StatelessWidget {
   const FuelParam({Key? key}) : super(key: key);
