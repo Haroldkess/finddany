@@ -11,17 +11,15 @@ import 'carditem.dart';
 import 'caroussel.dart';
 import 'category_card.dart';
 
-class ProductList extends StatefulWidget {
-  const ProductList({Key? key}) : super(key: key);
 
-  @override
-  State<ProductList> createState() => _ProductListState();
-}
 
-class _ProductListState extends State<ProductList> {
+
+class ProductList extends StatelessWidget {
+  const ProductList({super.key});
+
   @override
   Widget build(BuildContext context) {
-    var height = MediaQuery.of(context).size.height;
+       var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     return Column(
       children: [
@@ -108,49 +106,17 @@ class _ProductListState extends State<ProductList> {
             : const SizedBox.shrink(),
 
         Row(
-          children: [
+          children:const [
             Padding(
               padding: EdgeInsets.only(top: 5.0, left: 10),
-              child: AnimatedTextKit(
-                animatedTexts: [
-                  TypewriterAnimatedText(
-                    'We Specially Picked',
-                    textStyle:  TextStyle(
-                      fontSize: Responsive.isMobile(context) ? 20 : 32.0,
-                      fontWeight: FontWeight.w700,
-                      fontFamily: 'Raleway',
-                      color: Colors.red,
+              child:  Text(
+                      'Trending',
+                      style: TextStyle(
+                          fontFamily: 'Raleway',
+                          color: Color(0xff5956E9),
+                          fontSize: 30.0,
+                          fontWeight: FontWeight.w700),
                     ),
-                    speed: const Duration(milliseconds: 20),
-                  ),
-                  TypewriterAnimatedText(
-                    'Trending Brands!',
-                    textStyle:  TextStyle(
-                      fontSize: Responsive.isMobile(context) ? 20 : 32.0,
-                      fontWeight: FontWeight.w700,
-                      fontFamily: 'Raleway',
-                      color: Colors.red,
-                    ),
-                    speed: const Duration(milliseconds: 20),
-                  ),
-                  TypewriterAnimatedText(
-                    'Just For You!',
-                    textStyle:  TextStyle(
-                      fontSize:Responsive.isMobile(context) ? 20 :  32.0,
-                      fontWeight: FontWeight.w700,
-                      fontFamily: 'Raleway',
-                      color: Colors.red,
-                    ),
-                    speed: const Duration(milliseconds: 20),
-                  ),
-                ],
-                totalRepeatCount: 4,
-                pause: const Duration(milliseconds: 1000),
-                displayFullTextOnTap: true,
-                repeatForever: true,
-                stopPauseOnTap: true,
-              ),
-
               //  Text(
               //   'Order online collect in store',
               //   style: TextStyle(
@@ -213,5 +179,6 @@ class _ProductListState extends State<ProductList> {
         ),
       ],
     );
+ 
   }
 }

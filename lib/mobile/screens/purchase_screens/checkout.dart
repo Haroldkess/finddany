@@ -101,6 +101,7 @@ class _CheckoutState extends State<Checkout> {
                   onPressed: () {
                     showModalBottomSheet<void>(
                       context: context,
+                      isScrollControlled: true,
                       shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(24.0),
@@ -108,54 +109,53 @@ class _CheckoutState extends State<Checkout> {
                         ),
                       ),
                       builder: (BuildContext context) {
-                        return SingleChildScrollView(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal:
-                                    MediaQuery.of(context).size.width * 0.09),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                const ShippingAddress(),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                const ShippingPhone(),
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                context.watch<UiProvider>().loading
-                                    ? CupertinoActivityIndicator(
-                                        radius: 30,
-                                        color: Colors.blue.shade900,
-                                      )
-                                    : Button(
-                                        text: 'Add',
-                                        width: 200,
-                                        height: 50,
-                                        onClick: () async {
-                                          await _provider.initializePref();
-                                          // ignore: use_build_context_synchronously
-                                          await Controls.shippingInfoController(
-                                              context);
+                        return Padding(
+                          padding: EdgeInsets.only(
+                              top:
+                                  MediaQuery.of(context).size.width * 0.09,bottom: MediaQuery.of(context).viewInsets.bottom),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              const ShippingAddress(),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              const ShippingPhone(),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              context.watch<UiProvider>().loading
+                                  ? CupertinoActivityIndicator(
+                                      radius: 30,
+                                      color: Colors.blue.shade900,
+                                    )
+                                  : Button(
+                                      text: 'Add',
+                                      width: 200,
+                                      height: 50,
+                                      onClick: () async {
+                                        await _provider.initializePref();
+                                        // ignore: use_build_context_synchronously
+                                        await Controls.shippingInfoController(
+                                            context);
 
-                                          _provider.addAdress(_provider.pref!
-                                              .getString(addressKey)!);
-                                          _provider.addPhone(_provider.pref!
-                                              .getString(phoneKey)!);
-                                          // ignore: use_build_context_synchronously
-                                          Navigator.pop(context);
-                                        },
-                                        color: Colors.blue.shade900,
-                                      ),
-                                const SizedBox(
-                                  height: 50,
-                                ),
-                              ],
-                            ),
+                                        _provider.addAdress(_provider.pref!
+                                            .getString(addressKey)!);
+                                        _provider.addPhone(_provider.pref!
+                                            .getString(phoneKey)!);
+                                        // ignore: use_build_context_synchronously
+                                        Navigator.pop(context);
+                                      },
+                                      color: Colors.blue.shade900,
+                                    ),
+                              const SizedBox(
+                                height: 50,
+                              ),
+                            ],
                           ),
                         );
                       },

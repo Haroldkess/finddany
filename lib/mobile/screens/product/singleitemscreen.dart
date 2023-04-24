@@ -409,21 +409,24 @@ class _SingleItemState extends State<SingleItem> {
                                             }
 
                                             if (widget.product!.stock! < 1) {
-                                              showToast2(context,
-                                                  'Out of stock', isError: true);
+                                              showToast2(
+                                                  context, 'Out of stock',
+                                                  isError: true);
                                               return;
                                             }
                                             if (widget.product!.color!
                                                     .isNotEmpty &&
                                                 selectedColor.isEmpty) {
-                                              showToast2(context,'Please select a color',
+                                              showToast2(context,
+                                                  'Please select a color',
                                                   isError: true);
                                               return;
                                             }
                                             if (widget.product!.size!
                                                     .isNotEmpty &&
                                                 selectedSize.isEmpty) {
-                                              showToast2(context,'Please select a Size',
+                                              showToast2(context,
+                                                  'Please select a Size',
                                                   isError: true);
                                               return;
                                             }
@@ -445,9 +448,9 @@ class _SingleItemState extends State<SingleItem> {
                                                     widget.product!.userId!);
 
                                             if (doThis) {
-                                              showToast2(context,
-                                                  'Kindly continue shopping',
-                                                  isError: false);
+                                              // showToast2(context,
+                                              //     'Kindly continue shopping',
+                                              //     isError: false);
                                             } else {}
                                           },
                                           height: 60,

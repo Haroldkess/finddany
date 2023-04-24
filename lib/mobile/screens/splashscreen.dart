@@ -14,15 +14,17 @@ class Splash extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              const Padding(
-                padding: EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 0.0),
+               Padding(
+                padding: const  EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 0.0),
                 child: Center(
-                  child: Text('Shopping made easy',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 50.0,
-                          fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center),
+                  child: Semantics(
+                    child: const  Text('Shopping made easy with Finddany',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 25.0,
+                            fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center),
+                  ),
                 ),
               ),
               Padding(

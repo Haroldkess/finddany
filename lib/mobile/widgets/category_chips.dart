@@ -5,14 +5,12 @@ import 'package:shoppingyou/service/constant.dart';
 import 'package:shoppingyou/service/controller.dart';
 import 'package:shoppingyou/service/state/ui_manager.dart';
 
-class CategoryChips extends StatefulWidget {
-  const CategoryChips({Key? key}) : super(key: key);
 
-  @override
-  State<CategoryChips> createState() => _CategoryChipsState();
-}
 
-class _CategoryChipsState extends State<CategoryChips> {
+
+class CategoryChips extends StatelessWidget {
+  const CategoryChips({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -74,5 +72,6 @@ class _CategoryChipsState extends State<CategoryChips> {
                 );
               })),
     );
+ 
   }
 }

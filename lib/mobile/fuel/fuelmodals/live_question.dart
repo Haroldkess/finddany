@@ -95,8 +95,8 @@ class LiveInWidget extends StatelessWidget {
                   .addLiveIn(value!);
               if (value == "No") {
                 
-                showToast("Sorry this feature is not available in your region",
-                    errorRed);
+              
+                      showToast2(context,  "Sorry this feature is not available in your region", isError: true);
                     Navigator.pop(context);
               }
             },

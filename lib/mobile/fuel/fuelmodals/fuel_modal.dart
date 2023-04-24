@@ -32,10 +32,10 @@ class FuelModal {
         ),
       ),
       builder: (BuildContext context) {
-        return Padding(
-          padding: EdgeInsets.symmetric(
-              horizontal: MediaQuery.of(context).size.width * 0.09),
-          child: SingleChildScrollView(
+        return SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).size.width * 0.09),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
@@ -67,6 +67,7 @@ class FuelModal {
                       onPressed: () {
                         showModalBottomSheet<void>(
                           context: context,
+                          isScrollControlled: true,
                           shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(24.0),
@@ -74,59 +75,57 @@ class FuelModal {
                             ),
                           ),
                           builder: (BuildContext context) {
-                            return SingleChildScrollView(
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal:
-                                        MediaQuery.of(context).size.width *
-                                            0.09),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    const SizedBox(
-                                      height: 20,
-                                    ),
-                                    const ShippingAddress(),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    const ShippingPhone(),
-                                    const SizedBox(
-                                      height: 20,
-                                    ),
-                                    context.watch<UiProvider>().loading
-                                        ? CupertinoActivityIndicator(
-                                            radius: 30,
-                                            color: Colors.blue.shade900,
-                                          )
-                                        : Button(
-                                            text: 'Add',
-                                            width: 200,
-                                            height: 50,
-                                            onClick: () async {
-                                              await _Uiprovider
-                                                  .initializePref();
-                                              // ignore: use_build_context_synchronously
-                                              await Controls
-                                                  .shippingInfoController(
-                                                      context);
+                            return Padding(
+                              padding: EdgeInsets.only(
+                                  top: MediaQuery.of(context).size.width * 0.09,
+                                  bottom:
+                                      MediaQuery.of(context).viewInsets.bottom),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                  const ShippingAddress(),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  const ShippingPhone(),
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                  context.watch<UiProvider>().loading
+                                      ? CupertinoActivityIndicator(
+                                          radius: 30,
+                                          color: Colors.blue.shade900,
+                                        )
+                                      : Button(
+                                          text: 'Add',
+                                          width: 200,
+                                          height: 50,
+                                          onClick: () async {
+                                            await _Uiprovider.initializePref();
+                                            // ignore: use_build_context_synchronously
+                                            await Controls
+                                                .shippingInfoController(
+                                                    context);
 
-                                              _Uiprovider.addAdress(_Uiprovider
-                                                  .pref!
-                                                  .getString(addressKey)!);
-                                              _Uiprovider.addPhone(_Uiprovider
-                                                  .pref!
-                                                  .getString(phoneKey)!);
-                                              // ignore: use_build_context_synchronously
-                                              Navigator.pop(context);
-                                            },
-                                            color: Colors.blue.shade900,
-                                          ),
-                                    const SizedBox(
-                                      height: 50,
-                                    ),
-                                  ],
-                                ),
+                                            _Uiprovider.addAdress(_Uiprovider
+                                                .pref!
+                                                .getString(addressKey)!);
+                                            _Uiprovider.addPhone(_Uiprovider
+                                                .pref!
+                                                .getString(phoneKey)!);
+                                            // ignore: use_build_context_synchronously
+                                            Navigator.pop(context);
+                                          },
+                                          color: Colors.blue.shade900,
+                                        ),
+                                  const SizedBox(
+                                    height: 50,
+                                  ),
+                                ],
                               ),
                             );
                           },
@@ -151,6 +150,10 @@ class FuelModal {
                 FuelLiveIn(),
                 const SizedBox(
                   height: 10,
+                ),
+                const FuelAlertError2(),
+                const SizedBox(
+                  height: 30,
                 ),
                 context.watch<FuelManager>().loadStatus
                     ? CupertinoActivityIndicator(
@@ -177,6 +180,13 @@ class FuelModal {
                           }
                           if (_provider.liveIn.isEmpty) {
                             showToast2(context, "Please complete form",
+                                isError: true);
+                            return;
+                          }
+                          if (_provider.selectedLires >=
+                              _provider.availableLitres) {
+                            showToast2(context,
+                                "You cannot Buy more than our available Litres",
                                 isError: true);
                             return;
                           }

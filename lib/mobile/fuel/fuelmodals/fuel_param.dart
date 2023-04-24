@@ -20,7 +20,7 @@ class FuelParam extends StatelessWidget {
       padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
       child: Column(
         children: <Widget>[
-             Row(
+          Row(
             children: [
               const Icon(Icons.sell,
                   size: 24.0, color: Colors.grey, semanticLabel: 'Pump'),
@@ -45,8 +45,9 @@ class FuelParam extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 5,),
-        
+          const SizedBox(
+            height: 5,
+          ),
           Row(
             children: [
               const Icon(FontAwesomeIcons.gasPump,
@@ -56,7 +57,7 @@ class FuelParam extends StatelessWidget {
                 child: Row(
                   children: [
                     const Text(
-                      'Select Lires. ',
+                      'Select Litres. ',
                       style: const TextStyle(
                           color: Color(0xff868686), fontSize: 16.0),
                     ),
@@ -72,18 +73,17 @@ class FuelParam extends StatelessWidget {
               ),
             ],
           ),
-        
           Container(
             height: 50,
             child: Slider.adaptive(
               activeColor: Colors.blue.shade900,
               inactiveColor: Colors.black12,
-              max: stream.availableLitres < 10 ? 5 : 10,
+              max: stream.availableLitres <= 25 ? 5 : 25,
               min: 0,
               autofocus: true,
-              divisions: stream.availableLitres < 10 ?  0 : 2,
+              divisions: stream.availableLitres <= 25 ? 1 : 5,
               label: "${stream.selectedLires.toString()}Litres",
-              value:  stream.selectedLires,
+              value: stream.selectedLires,
               onChanged: (val) async {
                 _provider.addSelectedLitres(val);
               },
@@ -113,7 +113,6 @@ class FuelParam extends StatelessWidget {
   }
 }
 
-
 class FuelExtra extends StatelessWidget {
   final TextEditingController controller;
   const FuelExtra({Key? key, required this.controller}) : super(key: key);
@@ -141,7 +140,7 @@ class FuelExtra extends StatelessWidget {
             ],
           ),
           TextField(
-            controller:  controller,
+            controller: controller,
             decoration: const InputDecoration(
               enabledBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.grey),

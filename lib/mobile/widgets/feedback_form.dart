@@ -7,7 +7,10 @@ import 'package:shoppingyou/service/state/ui_manager.dart';
 
 class FeedBackForm extends StatelessWidget {
   final TextEditingController controller;
-  const FeedBackForm({Key? key, required this.controller}) : super(key: key);
+ final String? name;
+  final TextInputType? type;
+
+  const FeedBackForm({Key? key, required this.controller, this.name, this.type }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,24 +18,25 @@ class FeedBackForm extends StatelessWidget {
 
     return Container(
         child: Padding(
-      padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
+      padding: EdgeInsets.only(top: 45, bottom: MediaQuery.of(context).viewInsets.bottom),
       child: Column(
         children: <Widget>[
           Row(
-            children: const [
-              Icon(Icons.feedback_outlined,
+            children:  [
+          const    Icon(Icons.gas_meter ,
                   size: 24.0, color: Colors.grey, semanticLabel: 'FeedBack'),
               Padding(
                 padding: EdgeInsets.only(left: 10.0),
                 child: Text(
-                  'FeedBack',
-                  style: TextStyle(color: Color(0xff868686), fontSize: 16.0),
+                 name ?? 'FeedBack',
+                  style: const TextStyle(color: Color(0xff868686), fontSize: 16.0),
                 ),
               ),
             ],
           ),
           TextField(
-            controller:  controller,
+            controller: controller,
+            keyboardType: type ?? TextInputType.multiline,
             decoration: const InputDecoration(
               enabledBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.grey),

@@ -18,19 +18,28 @@ class ShippingInfo extends StatelessWidget {
         borderRadius: BorderRadius.circular(15.0),
       ),
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: Responsive.isMobile(context) ? 5 :  24, vertical: 15),
-        child: Column(children: <Widget>[
+        padding: EdgeInsets.only(
+            left: Responsive.isMobile(context) ? 5 : 24,
+            right: Responsive.isMobile(context) ? 5 : 24,
+            top: 15,
+            bottom: 15),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
           ShippingInfoItem(
             iconData: Icons.person_outline,
             text: context.watch<UiProvider>().name,
           ),
           ShippingInfoItem(
-            iconData: Icons.location_on_outlined,
-            text: context.watch<UiProvider>().address == 'null' ? '...' :context.watch<UiProvider>().address
-          ),
+              iconData: Icons.location_on_outlined,
+              text: context.watch<UiProvider>().address == 'null'
+                  ? '...'
+                  : context.watch<UiProvider>().address),
           ShippingInfoItem(
             iconData: Icons.phone_outlined,
-            text: context.watch<UiProvider>().phoneNumber == 'null' ? 'WhatsApp Number' : context.watch<UiProvider>().phoneNumber,
+            text: context.watch<UiProvider>().phoneNumber == 'null'
+                ? 'WhatsApp Number'
+                : context.watch<UiProvider>().phoneNumber,
           ),
         ]),
       ),
@@ -56,7 +65,7 @@ class ShippingInfoItem extends StatelessWidget {
             color: Color(0XFF200E32),
           ),
           SizedBox(
-            width: MediaQuery.of(context).size.width /  2,
+            width: MediaQuery.of(context).size.width / 2,
             child: Text(
               text,
               overflow: TextOverflow.ellipsis,

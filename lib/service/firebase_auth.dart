@@ -27,7 +27,7 @@ class AuthService {
           )
           .whenComplete(() => print('done'))
           .catchError((e) {
-        showToast(e.toString(), errorRed);
+        showToast2(context, e.toString(), isError: true);
         finished = false;
       });
       User signedInUser = authResult.user!;
@@ -73,18 +73,20 @@ class AuthService {
     try {
       _auth.signOut().whenComplete(() {
         finished = true;
-        showToast('Logged out successfully', successBlue);
+
+        showToast2(context, 'Logged out successfully');
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => const MyApp()),
             (route) => false);
       }).catchError((e) {
         finished = false;
-        showToast('Something went wrong ', errorRed);
+
+        showToast2(context, 'Something went wrong ', isError: true);
       });
     } catch (e) {
       finished = false;
-      showToast('Something went wrong ', errorRed);
+      showToast2(context, 'Something went wrong ', isError: true);
     }
 
     return finished;

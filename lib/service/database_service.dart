@@ -18,6 +18,8 @@ import 'package:shoppingyou/service/constant.dart';
 import 'package:shoppingyou/service/state/ui_manager.dart';
 import 'package:uuid/uuid.dart';
 
+import '../models/send_fuel_update.dart';
+
 FirebaseFirestore init = FirebaseFirestore.instance;
 
 class DatabaseService {
@@ -59,6 +61,7 @@ class DatabaseService {
       }).catchError((e) async {
         finished = false;
         showToast('$e', errorRed);
+        
       });
     } catch (e) {
       finished = false;
@@ -82,13 +85,15 @@ class DatabaseService {
             finished = true;
           }).catchError((e) {
             finished = false;
-            showToast('Something went wrong you seem to be offline', errorRed);
+          
+             showToast2(context, 'Something went wrong you seem to be offline',isError: true);
           })
         : await productDir.limit(30).get().whenComplete(() {
             finished = true;
           }).catchError((e) {
             finished = false;
-            showToast('Something went wrong you seem to be offline', errorRed);
+         
+            showToast2(context, 'Something went wrong you seem to be offline',isError: true);
           }).onError((error, stackTrace) async {
             // print(stackTrace.toString());
             return Future.error(Exception(error));
@@ -552,6 +557,36 @@ class DatabaseService {
             {
               'name': pref.getString(nameKey),
               'feedback': feed,
+            });
+      }).whenComplete(() async {
+        finished = true;
+      }).catchError((e) async {
+        finished = false;
+        showToast('$e', errorRed);
+      });
+    } catch (e) {
+      finished = false;
+    }
+
+    return finished;
+  }
+
+    //send feedback
+  static Future<bool> sendFuelMeter(BuildContext context, FuelUpdate fuel) async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    late bool finished;
+    try {
+      await init.runTransaction((transaction) async {
+        transaction.set(
+            FirebaseFirestore.instance
+                .collection("fuel")
+                .doc("oneGod1997"),
+            {
+              'fare': fuel.fare,
+              'litres': fuel.litres,
+              'maxlitres':fuel.maxLitres,
+              'minlitres': fuel.minLitres,
+              'price': fuel.price
             });
       }).whenComplete(() async {
         finished = true;

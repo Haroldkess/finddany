@@ -58,22 +58,22 @@ class _DoneDealsState extends State<DoneDeals> {
         onRefresh: () => Controls.doneDealsController(context),
         child: Stack(
           children: [
-            context.watch<UiProvider>().doneDeals.isNotEmpty
-                ? Padding(
-                    padding: const EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 20.0),
-                    child: ShaderMask(
-                        shaderCallback: (rect) {
-                          return const LinearGradient(
-                            begin: Alignment.center,
-                            end: FractionalOffset.bottomCenter,
-                            colors: [Colors.black, Colors.transparent],
-                          ).createShader(rect);
-                        },
-                        blendMode: BlendMode.dstIn,
-                        child: const Image(
-                            image: AssetImage('assets/images/splash.png'),
-                            fit: BoxFit.contain)))
-                : const SizedBox.shrink(),
+            // context.watch<UiProvider>().doneDeals.isNotEmpty
+            //     ? Padding(
+            //         padding: const EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 20.0),
+            //         child: ShaderMask(
+            //             shaderCallback: (rect) {
+            //               return const LinearGradient(
+            //                 begin: Alignment.center,
+            //                 end: FractionalOffset.bottomCenter,
+            //                 colors: [Colors.black, Colors.transparent],
+            //               ).createShader(rect);
+            //             },
+            //             blendMode: BlendMode.dstIn,
+            //             child: const Image(
+            //                 image: AssetImage('assets/images/splash.png'),
+            //                 fit: BoxFit.contain)))
+            //     : const SizedBox.shrink(),
             Container(
               padding: EdgeInsets.symmetric(
                   horizontal: Responsive.isDesktop(context)

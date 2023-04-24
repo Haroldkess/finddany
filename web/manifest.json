@@ -1,11 +1,11 @@
 {
-    "name": "Findd",
-    "short_name": "Findd",
+    "name": "Finddany",
+    "short_name": "Finddany",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "Get your day to day products here on Findd. We deliver to your door step.",
+    "description": "Get your day to day products here on Finddany. We deliver to your door step.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

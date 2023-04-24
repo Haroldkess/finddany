@@ -61,21 +61,20 @@ class _InicioPageState extends State<InicioPage> {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController _searchController = TextEditingController();
-    var height = MediaQuery.of(context).size.height;
-    var width = MediaQuery.of(context).size.width;
-    String _searchText = "";
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0.1,
-        title: Text(
-          appName,
-          style: const TextStyle(
-              fontFamily: 'Raleway',
-              color: Color(0xff5956E9),
-              fontSize: 25.0,
-              fontWeight: FontWeight.w700),
+        title: Semantics(
+          label: appName,
+          child: Text(
+            appName,
+            style: const TextStyle(
+                fontFamily: 'Raleway',
+                color: Color(0xff5956E9),
+                fontSize: 25.0,
+                fontWeight: FontWeight.w700),
+          ),
         ),
         leading: IconButton(
             onPressed: () {
@@ -99,7 +98,6 @@ class _InicioPageState extends State<InicioPage> {
             desktop: IconButton(
                 onPressed: () async {
                   await _submit(context);
-          
                 },
                 icon: const Icon(
                   FontAwesomeIcons.gasPump,
@@ -112,7 +110,7 @@ class _InicioPageState extends State<InicioPage> {
                 },
                 icon: const Icon(
                   FontAwesomeIcons.gasPump,
-                   size: 17,
+                  size: 17,
                   color: Color(0xff5956E9),
                 )),
             mobileLarge: const SizedBox.shrink(),
@@ -146,7 +144,6 @@ class _InicioPageState extends State<InicioPage> {
       body: Stack(
         //    alignment: Alignment.centerRight,
         children: [
-  
           Container(
               child: Padding(
                   padding: const EdgeInsets.fromLTRB(0.0, 3.0, 0.0, 0.0),
@@ -227,16 +224,21 @@ class _InicioPageState extends State<InicioPage> {
     bool gotten = await FuelControl.getFuelValues(context);
 
     if (value == false) {
-      showToast('We are closed kindly come back tomorrow', errorRed);
+      showToast2(context, 'We are closed kindly come back tomorrow',
+          isError: true);
       return;
     }
 
     if (gotten) {
-      showToast("Fuel meters gotten successfully", successBlue);
+      showToast2(
+        context,
+        "Fuel meters gotten successfully",
+      );
       // ignore: use_build_context_synchronously
       if (Provider.of<FuelManager>(context, listen: false).availableLitres <
           5) {
-        showToast("We are Low on fuel kindly check in Next time", errorRed);
+        showToast2(context, "We are Low on fuel kindly check in Next time",
+            isError: true);
         return;
         // ignore: use_build_context_synchronously
       } else {
@@ -244,7 +246,8 @@ class _InicioPageState extends State<InicioPage> {
         FuelModal.fuelModal(context, controller);
       }
     } else {
-      showToast("Can't get fuel meters at the moment..", errorRed);
+      showToast2(context, "Can't get fuel meters at the moment..",
+          isError: true);
       return;
     }
   }

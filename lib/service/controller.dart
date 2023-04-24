@@ -1,3 +1,4 @@
+// ignore_for_file: use_build_context_synchronously
 
 import 'dart:developer';
 import 'dart:io';
@@ -13,8 +14,10 @@ import 'package:shoppingyou/models/prod_model.dart';
 import 'package:shoppingyou/service/constant.dart';
 import 'package:shoppingyou/service/database_service.dart';
 import 'package:shoppingyou/service/firebase_auth.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../models/order_model.dart';
+import '../models/send_fuel_update.dart';
 import 'state/ui_manager.dart';
 
 class Controls {
@@ -76,8 +79,11 @@ class Controls {
     if (signUpUser) {
       _provider.load(false);
     } else {
+      showToast2(context, 'something went wrong please try again',
+          isError: true);
       _provider.load(false);
     }
+    _provider.load(false);
     return signUpUser;
   }
 
@@ -85,13 +91,18 @@ class Controls {
     UiProvider _provider = Provider.of<UiProvider>(context, listen: false);
     _provider.load(true);
 
-    bool signUpUser = await AuthService.login(context);
+    bool signUpUser =
+        await AuthService.login(context).timeout(const Duration(seconds: 30));
 
     if (signUpUser) {
       _provider.load(false);
     } else {
+      showToast2(context, 'something went wrong please try again',
+          isError: true);
       _provider.load(false);
     }
+
+    _provider.load(false);
 
     return signUpUser;
   }
@@ -154,8 +165,15 @@ class Controls {
       provider.changeCategory('Select Category');
       provider.clearPickedProductPictures();
       provider.load(false);
-      showToast('Product posted successfully!', successBlue);
+
+      // ignore: use_build_context_synchronously
+      showToast2(context, 'Product posted successfully!', isError: false);
+    } else {
+      showToast2(context, 'something went wrong please try again',
+          isError: true);
+      provider.load(false);
     }
+    provider.load(false);
 
     return postTracker;
   }
@@ -197,12 +215,15 @@ class Controls {
 
     if (postTracker) {
       provider.load(false);
-      showToast2(context, 'Product Added To Cart Successfully!', isError: false);
+      showToast2(context, 'Product Added To Cart Successfully!',
+          isError: false);
 
       // ignore: use_build_context_synchronously
       await cartCollectionControl(context);
+    } else {
+      provider.load(false);
     }
-
+    provider.load(false);
     return postTracker;
   }
 
@@ -214,8 +235,9 @@ class Controls {
       log(getCategory.toString());
       _provider.addCategory(getCategory);
     }).catchError((e) {
-      showToast('You might be offline kindly check your internet connection',
-          errorRed);
+      showToast2(
+          context, 'You might be offline kindly check your internet connection',
+          isError: true);
     });
   }
 
@@ -271,10 +293,14 @@ class Controls {
     bool done = await DatabaseService.searchProducts(context);
     if (done) {
       provider.load(false);
-      showToast('Search Completed!', successBlue);
+
+      //  showToast2(context, 'Search Completed!',);
     } else {
-      showToast('Something went wrong!', errorRed);
+      provider.load(false);
+
+      showToast2(context, 'Something went wrong!', isError: true);
     }
+    provider.load(false);
   }
 
 //get done deals
@@ -284,15 +310,16 @@ class Controls {
     if (done) {
     } else {}
   }
+
   // get fuel history
-    static Future<void> fuelHistoryController(BuildContext context) async {
+  static Future<void> fuelHistoryController(BuildContext context) async {
     bool done = await DatabaseService.getUserFuelDeal(context);
     if (done) {
     } else {}
   }
 
-    // get admin fuel orders
-    static Future<void> adminFuelHistoryController(BuildContext context) async {
+  // get admin fuel orders
+  static Future<void> adminFuelHistoryController(BuildContext context) async {
     bool done = await DatabaseService.getAdminFuelDeal(context);
     if (done) {
     } else {}
@@ -323,14 +350,22 @@ class Controls {
     bool done = await DatabaseService.postShippingInfo(context);
     if (done) {
       provider.load(false);
-      showToast('Shpping Information Updated Successfully!', successBlue);
+
+      showToast2(
+        context,
+        'Shipping Information Updated Successfully!',
+      );
     } else {
-      showToast('Something went wrong!', errorRed);
+      provider.load(false);
+
+      showToast2(context, 'Something went wrong!', isError: true);
     }
+    provider.load(false);
   }
 
   //send feedback
-   static Future<void> sendFeedBackController(BuildContext context, String feed) async {
+  static Future<void> sendFeedBackController(
+      BuildContext context, String feed) async {
     UiProvider provider = Provider.of<UiProvider>(context, listen: false);
     provider.load(true);
 
@@ -338,10 +373,34 @@ class Controls {
     bool done = await DatabaseService.sendFeedback(context, feed);
     if (done) {
       provider.load(false);
-      showToast('Feedback sent Successfully!', successBlue);
+
+      showToast2(context, 'Feedback sent Successfully!', isError: false);
     } else {
-      showToast('Something went wrong!', errorRed);
+      provider.load(false);
+
+      showToast2(context, 'Something went wrong!', isError: true);
     }
+    provider.load(false);
+  }
+
+// update fuel price
+  static Future<void> updateFuelController(
+      BuildContext context, FuelUpdate fuel) async {
+    UiProvider provider = Provider.of<UiProvider>(context, listen: false);
+    provider.load(true);
+
+    // ignore: use_build_context_synchronously
+    bool done = await DatabaseService.sendFuelMeter(context, fuel);
+    if (done) {
+      provider.load(false);
+
+      showToast2(context, 'Fuel Meter  updated Successfully!', isError: false);
+    } else {
+      provider.load(false);
+
+      showToast2(context, 'Something went wrong!', isError: true);
+    }
+    provider.load(false);
   }
 
 // edit user info
@@ -353,10 +412,14 @@ class Controls {
     bool done = await DatabaseService.postUserInfo(context);
     if (done) {
       provider.load(false);
-      showToast('Your Profile has been Updated Successfully!', successBlue);
+
+      showToast2(context, 'Your Profile has been Updated Successfully!',
+          isError: false);
     } else {
-      showToast('Something went wrong!', errorRed);
+      provider.load(false);
+      showToast2(context, 'Something went wrong!', isError: true);
     }
+    provider.load(false);
   }
 
   //delete from cart
@@ -372,31 +435,37 @@ class Controls {
 
     if (deleteTracker) {
       provider.load(false);
-      showToast2(context,'Item deleted successfully !', isError: false);
+      showToast2(context, 'Item deleted successfully !', isError: false);
+    } else {
+      provider.load(false);
+      showToast2(context, 'Something went wrong', isError: true);
     }
+    provider.load(false);
 
     return deleteTracker;
   }
 
 // process
-    static Future<bool> process(BuildContext context, List<AdminOrderModel> adminDeals, String id, bool val) async {
+  static Future<bool> process(BuildContext context,
+      List<AdminOrderModel> adminDeals, String id, bool val) async {
     UiProvider provider = Provider.of<UiProvider>(context, listen: false);
 
     provider.load(true);
 
     // ignore: use_build_context_synchronously
-    bool enableTracker = await DatabaseService.processOrder(adminDeals,  id, val);
+    bool enableTracker =
+        await DatabaseService.processOrder(adminDeals, id, val);
 
     if (enableTracker) {
       provider.load(false);
-      showToast(' successfull!', successBlue);
-    }
-    else{
-       provider.load(false);
-      showToast(' something went wrong!', errorRed);
 
+      showToast2(context, ' successfull!', isError: false);
+    } else {
+      provider.load(false);
+
+      showToast2(context, 'Something went wrong', isError: true);
     }
-    
+    provider.load(false);
 
     return enableTracker;
   }
@@ -413,7 +482,7 @@ class Controls {
 
     if (enableTracker) {
       //provider.load(false);
-    //  showToast(' successfull!', successBlue);
+      //  showToast(' successfull!', successBlue);
     }
 
     return enableTracker;
@@ -428,9 +497,13 @@ class Controls {
 
     if (enableTracker) {
       provider.load(false);
-      showToast(' successfull!', successBlue);
-    }
 
+      showToast2(context, ' successfull!', isError: false);
+    } else {
+      provider.load(false);
+      showToast2(context, 'Something went wrong', isError: true);
+    }
+    provider.load(false);
     return enableTracker;
   }
 }
@@ -469,15 +542,17 @@ class Utility {
       print(getUrl);
       bool isDone = await DatabaseService.updateProfileImage(context, getUrl);
       if (isDone) {
-        showToast('You changed your profile image successfully ', successBlue);
+        showToast2(context, 'You changed your profile image successfully ');
         provider.load(false);
       } else {
-        showToast(
+        showToast2(context,
             'We could not update your profile image at the moment please try again later.',
-            errorRed);
+            isError: true);
         provider.load(false);
       }
+      provider.load(false);
     }
+    provider.load(false);
   }
 
   static Future<void> makePayment(BuildContext context, int addedAmount) async {
@@ -504,19 +579,21 @@ class Utility {
           Navigator.pop(context);
           // showToast(
           //     'Charge was successful. Ref: ${res.reference}', successBlue);
-       
+
           showToast2(context, 'Order Completed succseffully ', isError: false);
         } else {
-          showToast2(context, 'waiting for network do not Exit page  ', isError: false);
-        
+          showToast2(context, 'waiting for network do not Exit page  ',
+              isError: false);
+
           bool sendOrder = await DatabaseService.makeOrder(context);
           if (sendOrder) {
             provider.load(false);
-        
+
             Navigator.pop(context);
             // showToast(
             //     'Charge was successful. Ref: ${res.reference}', successBlue);
-            showToast2(context, 'Order Completed succseffully ', isError: false);
+            showToast2(context, 'Order Completed succseffully ',
+                isError: false);
           }
         }
       } else {
@@ -529,9 +606,19 @@ class Utility {
       Navigator.pop(context);
       print('Payment Error ==> $error');
     }
-    Navigator.pop(context);
     provider.load(false);
+    Navigator.pop(context);
+    // provider.load(false);
   }
 
-
+    static Future<void> launchInWebViewOrVC(Uri url) async {
+    if (!await launchUrl(
+      url,
+      mode: LaunchMode.platformDefault,
+      webViewConfiguration: const WebViewConfiguration(
+          headers: <String, String>{'my_header_key': 'my_header_value'}),
+    )) {
+      throw Exception('Could not launch $url');
+    }
+  }
 }

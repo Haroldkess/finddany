@@ -17,20 +17,20 @@ class Caroussel extends StatelessWidget {
     return Stack(
       alignment: Alignment.center,
       children: [
-        Padding(
-            padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
-            child: ShaderMask(
-                shaderCallback: (rect) {
-                  return const LinearGradient(
-                    begin: Alignment.center,
-                    end: FractionalOffset.bottomCenter,
-                    colors: [Colors.black, Colors.transparent],
-                  ).createShader(rect);
-                },
-                blendMode: BlendMode.dstIn,
-                child: const Image(
-                    image: AssetImage('assets/images/splash.png'),
-                    fit: BoxFit.contain))),
+        // Padding(
+        //     padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
+        //     child: ShaderMask(
+        //         shaderCallback: (rect) {
+        //           return const LinearGradient(
+        //             begin: Alignment.center,
+        //             end: FractionalOffset.bottomCenter,
+        //             colors: [Colors.black, Colors.transparent],
+        //           ).createShader(rect);
+        //         },
+        //         blendMode: BlendMode.dstIn,
+        //         child: const Image(
+        //             image: AssetImage('assets/images/splash.png'),
+        //             fit: BoxFit.contain))),
         Column(
           children: <Widget>[
             CarouselSlider(

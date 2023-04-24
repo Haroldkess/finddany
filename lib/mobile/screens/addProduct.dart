@@ -394,9 +394,8 @@ class _AddProductState extends State<AddProduct> {
                                         oldPrice.text,
                                         int.tryParse(stock.text)!);
                                     if (check == false) {
-                                      showToast(
-                                          'Please fill in the form correctly',
-                                          errorRed);
+                                       // ignore: use_build_context_synchronously
+                                       showToast2(context,  'Please fill in the form properly. ', isError: true);
                                       log('incorrect Form');
                                       return;
                                     }
@@ -434,8 +433,8 @@ class _AddProductState extends State<AddProduct> {
                                       pickedSize.clear();
                                         shopName.clear();
                                         shopPhone.clear();
-                                      showToast('This Form will  reset!',
-                                          successBlue);
+                                      // showToast('This Form will  reset!',
+                                      //     successBlue);
 
                                       // ignore: use_build_context_synchronously
                                       // Navigator.pushReplacementNamed(

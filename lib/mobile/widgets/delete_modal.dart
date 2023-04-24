@@ -11,12 +11,14 @@ import 'package:shoppingyou/mobile/widgets/payment_modal.dart';
 import 'package:shoppingyou/mobile/widgets/shiping_information.dart';
 import 'package:shoppingyou/mobile/widgets/toast.dart';
 import 'package:shoppingyou/models/order_model.dart';
+import 'package:shoppingyou/models/send_fuel_update.dart';
 import 'package:shoppingyou/responsive/responsive_config.dart';
 import 'package:shoppingyou/service/constant.dart';
 import 'package:shoppingyou/service/controller.dart';
 import 'package:shoppingyou/service/state/ui_manager.dart';
 
 import '../../service/firebase_auth.dart';
+import '../../service/state/fuel_manager.dart';
 import 'address_form.dart';
 import 'button.dart';
 import 'credit_card.dart';
@@ -223,6 +225,7 @@ class Modals {
       // ignore: use_build_context_synchronously
       backgroundColor: Theme.of(cont).scaffoldBackgroundColor,
       context: cont,
+      isScrollControlled: true,
       builder: (BuildContext context) {
         return const ShippingInfo();
       },
@@ -247,133 +250,108 @@ class Modals {
       // ignore: use_build_context_synchronously
       backgroundColor: Theme.of(cont).scaffoldBackgroundColor,
       context: cont,
+      isScrollControlled: true,
       // ignore: use_build_context_synchronously
       isDismissible:
           Provider.of<UiProvider>(cont, listen: false).loading ? false : true,
       builder: (BuildContext context) {
-        return Stack(
-          alignment: Alignment.topCenter,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                const Image(
-                    image: AssetImage('assets/images/EllipseMorado.png')),
-                ShaderMask(
-                    shaderCallback: (rect) {
-                      return const LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: FractionalOffset.center,
-                        colors: [Colors.black, Colors.transparent],
-                      ).createShader(rect);
-                    },
-                    blendMode: BlendMode.dstIn,
-                    child: const Image(
-                        image: AssetImage('assets/images/EllipseRosa.png'),
-                        fit: BoxFit.contain)),
-              ],
+        return Container(
+          // height: MediaQuery.of(context).size.height,
+          decoration: const BoxDecoration(
+            color: Colors.transparent,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              child: Container(
-                height: MediaQuery.of(context).size.height,
-                decoration: const BoxDecoration(
-                  color: Colors.transparent,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
-                  ),
-                ),
-                child: Column(
+          ),
+          padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom, top: 15),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        IconButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            icon: const Icon(
-                              Icons.clear,
-                              color: Colors.red,
-                            ))
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Edit  Profile',
-                          style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 33,
-                              color: Colors.blue.shade900),
-                        ),
-                      ],
-                    ),
-                    Expanded(
-                        // height: context.watch<SizeProvider>().screenHeight /  2.5,
-                        child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          const EditName(),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          const EditEmail(),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          const EditPhone(),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          const EditAddress(),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          context.watch<UiProvider>().loading
-                              ? CupertinoActivityIndicator(
-                                  radius: 30,
-                                  color: Colors.blue.shade900,
-                                )
-                              : Button(
-                                  text: 'Add',
-                                  width: 200,
-                                  height: 50,
-                                  onClick: () async {
-                                    UiProvider _provider =
-                                        Provider.of<UiProvider>(context,
-                                            listen: false);
-                                    await _provider.initializePref();
-                                    // ignore: use_build_context_synchronously
-                                    await Controls.editUserController(context);
-
-                                    _provider.addAdress(
-                                        _provider.pref!.getString(addressKey)!);
-                                    _provider.addPhone(
-                                        _provider.pref!.getString(phoneKey)!);
-
-                                    _provider.addMail(
-                                        _provider.pref!.getString(emailKey)!);
-                                    _provider.addUserName(
-                                        _provider.pref!.getString(nameKey)!);
-                                    // ignore: use_build_context_synchronously
-                                    Navigator.pop(context);
-                                  },
-                                  color: Colors.blue.shade900,
-                                ),
-                          const SizedBox(
-                            height: 50,
-                          ),
-                        ],
-                      ),
-                    ))
+                    IconButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: const Icon(
+                          Icons.clear,
+                          color: Colors.red,
+                        ))
                   ],
                 ),
-              ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Edit  Profile',
+                      style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 33,
+                          color: Colors.blue.shade900),
+                    ),
+                  ],
+                ),
+                Column(
+                  children: [
+                    const EditName(),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    const EditEmail(),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    const EditPhone(),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    const EditAddress(),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    context.watch<UiProvider>().loading
+                        ? CupertinoActivityIndicator(
+                            radius: 30,
+                            color: Colors.blue.shade900,
+                          )
+                        : Button(
+                            text: 'Add',
+                            width: 200,
+                            height: 50,
+                            onClick: () async {
+                              UiProvider _provider = Provider.of<UiProvider>(
+                                  context,
+                                  listen: false);
+                              await _provider.initializePref();
+                              // ignore: use_build_context_synchronously
+                              await Controls.editUserController(context);
+
+                              _provider.addAdress(
+                                  _provider.pref!.getString(addressKey)!);
+                              _provider.addPhone(
+                                  _provider.pref!.getString(phoneKey)!);
+
+                              _provider.addMail(
+                                  _provider.pref!.getString(emailKey)!);
+                              _provider.addUserName(
+                                  _provider.pref!.getString(nameKey)!);
+                              // ignore: use_build_context_synchronously
+                              Navigator.pop(context);
+                            },
+                            color: Colors.blue.shade900,
+                          ),
+                    const SizedBox(
+                      height: 50,
+                    ),
+                  ],
+                )
+              ],
             ),
-          ],
+          ),
         );
       },
     );
@@ -425,8 +403,9 @@ class Modals {
         });
   }
 
-  static void processOrder(BuildContext cont,List<AdminOrderModel> adminDeals, String id) {
-     showModalBottomSheet(
+  static void processOrder(
+      BuildContext cont, List<AdminOrderModel> adminDeals, String id) {
+    showModalBottomSheet(
       backgroundColor: Colors.transparent,
       context: cont,
       builder: (BuildContext context) {
@@ -505,15 +484,13 @@ class Modals {
                               ? 120
                               : 200,
                           onClick: () async {
-                            bool returned =
-                                await Controls.process(context, adminDeals, id, true);
+                            bool returned = await Controls.process(
+                                context, adminDeals, id, true);
 
                             if (returned) {
                               {
-Navigator.pop(cont);
+                                Navigator.pop(cont);
                               }
-                          
-                              
                             }
                           },
                           height: 60,
@@ -720,127 +697,104 @@ Navigator.pop(cont);
       // ignore: use_build_context_synchronously
       backgroundColor: Theme.of(cont).scaffoldBackgroundColor,
       context: cont,
+      isScrollControlled: true,
       // ignore: use_build_context_synchronously
       isDismissible:
           Provider.of<UiProvider>(cont, listen: false).loading ? false : true,
       builder: (BuildContext context) {
-        return Stack(
-          alignment: Alignment.topCenter,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                const Image(
-                    image: AssetImage('assets/images/EllipseMorado.png')),
-                ShaderMask(
-                    shaderCallback: (rect) {
-                      return const LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: FractionalOffset.center,
-                        colors: [Colors.black, Colors.transparent],
-                      ).createShader(rect);
-                    },
-                    blendMode: BlendMode.dstIn,
-                    child: const Image(
-                        image: AssetImage('assets/images/EllipseRosa.png'),
-                        fit: BoxFit.contain)),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              child: Container(
-                height: MediaQuery.of(context).size.height,
-                decoration: const BoxDecoration(
-                  color: Colors.transparent,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
-                  ),
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        IconButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            icon: const Icon(
-                              Icons.clear,
-                              color: Colors.red,
-                            ))
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Please input your email',
-                          style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 33,
-                              color: Colors.blue.shade900),
-                        ),
-                      ],
-                    ),
-                    Expanded(
-                        // height: context.watch<SizeProvider>().screenHeight /  2.5,
-                        child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          ForgetPasswordEmail(
-                            controller: controller,
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          context.watch<UiProvider>().loading
-                              ? CupertinoActivityIndicator(
-                                  radius: 30,
-                                  color: Colors.blue.shade900,
-                                )
-                              : Button(
-                                  text: 'Continue',
-                                  width: 200,
-                                  height: 50,
-                                  onClick: () async {
-                                    UiProvider _provider =
-                                        Provider.of<UiProvider>(context,
-                                            listen: false);
-                                    _provider.load(true);
-
-                                    bool awaitTask =
-                                        await AuthService.runForgetPassword(
-                                            controller.text);
-                                    _provider.load(false);
-
-                                    if (awaitTask) {
-                                      _provider.load(false);
-                                      showToast(
-                                          'Reset password link has been sent to ${controller.text}',
-                                          successBlue);
-                                    } else {
-                                      _provider.load(false);
-                                      showToast(
-                                          'Reset password failed', successBlue);
-                                    }
-                                    _provider.load(false);
-                                    Navigator.pop(context);
-                                  },
-                                  color: Colors.blue.shade900,
-                                ),
-                          const SizedBox(
-                            height: 50,
-                          ),
-                        ],
-                      ),
-                    ))
-                  ],
-                ),
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          child: Container(
+            // height: MediaQuery.of(context).size.height,
+            decoration: const BoxDecoration(
+              color: Colors.transparent,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
               ),
             ),
-          ],
+            padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    IconButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: const Icon(
+                          Icons.clear,
+                          color: Colors.red,
+                        ))
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Please input your email',
+                      style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 17,
+                          color: Colors.blue.shade900),
+                    ),
+                  ],
+                ),
+                Column(
+                  children: [
+                    ForgetPasswordEmail(
+                      controller: controller,
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    context.watch<UiProvider>().loading
+                        ? CupertinoActivityIndicator(
+                            radius: 30,
+                            color: Colors.blue.shade900,
+                          )
+                        : Button(
+                            text: 'Continue',
+                            width: 200,
+                            height: 50,
+                            onClick: () async {
+                              UiProvider _provider = Provider.of<UiProvider>(
+                                  context,
+                                  listen: false);
+                              _provider.load(true);
+
+                              bool awaitTask =
+                                  await AuthService.runForgetPassword(
+                                      controller.text);
+                              _provider.load(false);
+
+                              if (awaitTask) {
+                                _provider.load(false);
+
+                                showToast2(context,
+                                    'Reset password link has been sent to ${controller.text}');
+                              } else {
+                                _provider.load(false);
+
+                                showToast2(context, 'Reset password failed',
+                                    isError: true);
+                              }
+                              _provider.load(false);
+                              Navigator.pop(context);
+                            },
+                            color: Colors.blue.shade900,
+                          ),
+                    const SizedBox(
+                      height: 50,
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
         );
       },
     );
@@ -887,6 +841,119 @@ Navigator.pop(cont);
                           // ignore: use_build_context_synchronously
                           await Controls.sendFeedBackController(
                               context, controller.text);
+
+                          Navigator.pop(context);
+                        },
+                        color: Colors.blue.shade900,
+                      ),
+                const SizedBox(
+                  height: 50,
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  static Future<void> adjustFuelMeter(
+      BuildContext context,
+      TextEditingController price,
+      TextEditingController fare,
+      TextEditingController litres,
+      TextEditingController max,
+      TextEditingController min) async {
+    UiProvider _provider = Provider.of<UiProvider>(context, listen: false);
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(24.0),
+          topRight: Radius.circular(24.0),
+        ),
+      ),
+      builder: (BuildContext context) {
+        return SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).size.width * 0.09),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(
+                  height: 20,
+                ),
+                FeedBackForm(
+                    controller: price,
+                    name: "Price",
+                    type: TextInputType.number),
+                const SizedBox(
+                  height: 10,
+                ),
+                FeedBackForm(
+                    controller: litres,
+                    name: "Litres",
+                    type: TextInputType.number),
+                const SizedBox(
+                  height: 10,
+                ),
+                FeedBackForm(
+                    controller: max,
+                    name: "Max-Litres",
+                    type: TextInputType.number),
+                const SizedBox(
+                  height: 10,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                FeedBackForm(
+                    controller: min,
+                    name: "Min-Litres",
+                    type: TextInputType.number),
+                const SizedBox(
+                  height: 10,
+                ),
+                FeedBackForm(
+                    controller: fare, name: "Fare", type: TextInputType.number),
+                const SizedBox(
+                  height: 10,
+                ),
+                context.watch<UiProvider>().loading
+                    ? CupertinoActivityIndicator(
+                        radius: 30,
+                        color: Colors.blue.shade900,
+                      )
+                    : Button(
+                        text: 'Send',
+                        width: 200,
+                        height: 50,
+                        onClick: () async {
+                          FuelManager fuel =
+                              Provider.of<FuelManager>(context, listen: false);
+                          FuelUpdate fuelData = FuelUpdate(
+                              fare: fare.text.isNotEmpty
+                                  ? int.tryParse(fare.text)
+                                  : fuel.fare,
+                              litres: litres.text.isNotEmpty
+                                  ? int.tryParse(litres.text)
+                                  : fuel.availableLitres,
+                              maxLitres: max.text.isNotEmpty
+                                  ? int.tryParse(max.text)
+                                  : fuel.maxLitres,
+                              minLitres: min.text.isNotEmpty
+                                  ? int.tryParse(min.text)
+                                  : fuel.minLitres,
+                              price: price.text.isNotEmpty
+                                  ? int.tryParse(price.text)
+                                  : fuel.sellingPrice.toInt());
+
+                          // ignore: use_build_context_synchronously
+                          await Controls.updateFuelController(
+                              context, fuelData);
 
                           Navigator.pop(context);
                         },

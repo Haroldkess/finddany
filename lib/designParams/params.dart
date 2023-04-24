@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 
 double maxFactor = 1.5;
-String appName = 'Findd';
+String appName = 'Finddany';
 double minFactor = 0.7;
 
 Color defaultColor = Color(0xFF0D471);

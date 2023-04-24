@@ -79,20 +79,20 @@ class _CartState extends State<Cart> {
       ),
       body: Stack(
         children: [
-          Padding(
-              padding: const EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 20.0),
-              child: ShaderMask(
-                  shaderCallback: (rect) {
-                    return const LinearGradient(
-                      begin: Alignment.center,
-                      end: FractionalOffset.bottomCenter,
-                      colors: [Colors.black, Colors.transparent],
-                    ).createShader(rect);
-                  },
-                  blendMode: BlendMode.dstIn,
-                  child: const Image(
-                      image: AssetImage('assets/images/splash.png'),
-                      fit: BoxFit.contain))),
+          // Padding(
+          //     padding: const EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 20.0),
+          //     child: ShaderMask(
+          //         shaderCallback: (rect) {
+          //           return const LinearGradient(
+          //             begin: Alignment.center,
+          //             end: FractionalOffset.bottomCenter,
+          //             colors: [Colors.black, Colors.transparent],
+          //           ).createShader(rect);
+          //         },
+          //         blendMode: BlendMode.dstIn,
+          //         child: const Image(
+          //             image: AssetImage('assets/images/splash.png'),
+          //             fit: BoxFit.contain))),
           Container(
             padding: EdgeInsets.symmetric(
                 horizontal: Responsive.isDesktop(context)
@@ -137,63 +137,77 @@ class _CartState extends State<Cart> {
                         ),
                 ),
                 const SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      const Text(
-                        'Total',
-                        style: TextStyle(fontSize: 17),
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            '${currencySymbol()}',
-                            style: const TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF5956E9),
+                context.watch<UiProvider>().cartList.isNotEmpty
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            const Text(
+                              'Total',
+                              style: TextStyle(fontSize: 17),
                             ),
-                          ),
-                          Text(
-                            numberFormat.format(int.tryParse(context
-                                .watch<UiProvider>()
-                                .totalPrice
-                                .toString())),
-                            style: const TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF5956E9),
+                            Row(
+                              children: [
+                                Text(
+                                  '${currencySymbol()}',
+                                  style: const TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF5956E9),
+                                  ),
+                                ),
+                                Text(
+                                  numberFormat.format(int.tryParse(context
+                                      .watch<UiProvider>()
+                                      .totalPrice
+                                      .toString())),
+                                  style: const TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF5956E9),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 30),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: LargeButton(
-                    text: 'Checkout',
-                    onClick: () async {
-                      bool value =
-                          await Controls.checkEnable(context, 'oneGod1997');
+                          ],
+                        ),
+                      )
+                    : const SizedBox.shrink(),
+                const SizedBox(height: 30),
+                context.watch<UiProvider>().cartList.isNotEmpty
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: LargeButton(
+                          text: 'Checkout',
+                          onClick: () async {
+                            if (Provider.of<UiProvider>(context, listen: false)
+                                .cartList
+                                .isEmpty) {
+                              Navigator.pop(context);
+                              showToast2(context, "Kindly add product to cart",
+                                  isError: true);
+                              return;
+                            }
+                            bool value = await Controls.checkEnable(
+                                context, 'oneGod1997');
 
-                      if (value == false) {
-                        // ignore: use_build_context_synchronously
-                        showToast2(context, 'We are closed kindly come back tomorrow',
-                            isError: true);
-                        return;
-                      }
-                      // ignore: use_build_context_synchronously
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => Checkout()),
-                      );
-                    },
-                  ),
-                ),
+                            if (value == false) {
+                              // ignore: use_build_context_synchronously
+                              showToast2(context,
+                                  'We are closed kindly come back tomorrow',
+                                  isError: true);
+                              return;
+                            }
+                            // ignore: use_build_context_synchronously
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) => Checkout()),
+                            );
+                          },
+                        ),
+                      )
+                    : SizedBox.shrink(),
                 SizedBox(height: 20)
               ],
             ),
@@ -300,7 +314,6 @@ class CartInfoAlert extends StatelessWidget {
   }
 }
 
-
 class FuelAlert extends StatelessWidget {
   const FuelAlert({Key? key}) : super(key: key);
 
@@ -336,14 +349,13 @@ class FuelAlert extends StatelessWidget {
   }
 }
 
-
 class FuelAlertError extends StatelessWidget {
   const FuelAlertError({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      color:  Colors.red.withOpacity(0.4),
+      color: Colors.red.withOpacity(0.4),
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15.0),
@@ -355,20 +367,61 @@ class FuelAlertError extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             IconButton(
-              icon: const Icon(Icons.notifications_none_outlined),
+              icon: const Icon(Icons.notifications_none_outlined,
+                  color: Colors.white),
               onPressed: () {},
               iconSize: 28,
             ),
-             const Expanded(
-               child: Text(
+            const Expanded(
+              child: Text(
                 'Incorrect phone number can delay delivery',
                 style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 10,
-                ),
-                         ),
-             ),
-           
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                    color: Colors.white),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class FuelAlertError2 extends StatelessWidget {
+  const FuelAlertError2({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: Colors.green.withOpacity(0.8),
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+        width: MediaQuery.of(context).size.width * 0.8,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            IconButton(
+              icon: const Icon(
+                Icons.info,
+                color: Colors.white,
+              ),
+              onPressed: () {},
+              iconSize: 28,
+            ),
+            const Expanded(
+              child: Text(
+                'Do not exit page or close browser when your transaction/payment is being processed',
+                style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                    color: Colors.white),
+              ),
+            ),
           ],
         ),
       ),

@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_paystack_client/flutter_paystack_client.dart'
@@ -34,7 +36,8 @@ class FuelControl {
     return isFinished;
   }
 
-  static Future<bool> pumpFuel(BuildContext context, int liters, String comment) async {
+  static Future<bool> pumpFuel(
+      BuildContext context, int liters, String comment) async {
     late bool isFinished;
     FuelManager fuel = Provider.of<FuelManager>(context, listen: false);
     SharedPreferences pref = await SharedPreferences.getInstance();
@@ -73,7 +76,7 @@ class FuelControl {
               "address": pref.getString(addressKey),
               "timestamp": Timestamp.now(),
               "name": pref.getString(nameKey),
-               "comment": comment,
+              "comment": comment,
               "recieved": false,
             });
         transaction.update(
@@ -90,11 +93,10 @@ class FuelControl {
     return isFinished;
   }
 
-  static Future<void> makePayment(
-      BuildContext context, String comment) async {
+  static Future<void> makePayment(BuildContext context, String comment) async {
     FuelManager provider = Provider.of<FuelManager>(context, listen: false);
     SharedPreferences pref = await SharedPreferences.getInstance();
-   double finalPrice = provider.selectedLires * provider.sellingPrice;
+    double finalPrice = provider.selectedLires * provider.sellingPrice;
 
     provider.isLoading(true);
     int added = 100;
@@ -105,52 +107,58 @@ class FuelControl {
         ..email = pref.getString(emailKey)
         ..amount = resolvedPrice
         // ..card!.cardTypes = CardT
-        // ..card!.cvc = "123" 
+        // ..card!.cvc = "123"
         // ..card!.expiryMonth = 12
         // ..card!.expiryYear = 2025
         // ..card!.name = "kelechi"
         ..reference = 'ref_${DateTime.now().millisecondsSinceEpoch}';
-        
+
       // ignore: use_build_context_synchronously
       final res = await PaystackClient.checkout(context, charge: charge);
 
       if (res.status) {
         // ignore: use_build_context_synchronously
-        bool sendOrder = await pumpFuel(context, provider.selectedLires.toInt(), comment);
+        bool sendOrder =
+            await pumpFuel(context, provider.selectedLires.toInt(), comment);
         if (sendOrder) {
           provider.isLoading(false);
           // ignore: use_build_context_synchronously
-        //  Navigator.pop(context);
+          //  Navigator.pop(context);
           // showToast(
           //     'Charge was successful. Ref: ${res.reference}', successBlue);
           showToast2(context, 'Order Completed successfully ', isError: false);
         } else {
-          showToast2(context,'waiting for network do not Exit page  ', isError: false);
+          showToast2(context, 'waiting for network do not Exit page  ',
+              isError: false);
           // ignore: use_build_context_synchronously
-          bool sendOrder = await pumpFuel(context, provider.selectedLires.toInt(),comment);
+          bool sendOrder =
+              await pumpFuel(context, provider.selectedLires.toInt(), comment);
           if (sendOrder) {
             provider.isLoading(false);
             // ignore: use_build_context_synchronously
             Navigator.pop(context);
             // showToast2(context,
             //     'Charge was successful. Ref: ${res.reference}', isError: false);
-             showToast2(context,'Order Completed successfully ', isError: false);
+            showToast2(context, 'Order Completed successfully ',
+                isError: false);
           }
         }
       } else {
         provider.isLoading(false);
         // ignore: use_build_context_synchronously
-    //   Navigator.pop(context);
-        showToast2(context,'Failed: ${res.message}', isError: true);
+        //   Navigator.pop(context);
+        // ignore: use_build_context_synchronously
+        showToast2(context, 'Failed: ${res.message}', isError: true);
       }
     } catch (error) {
       provider.isLoading(false);
       // ignore: use_build_context_synchronously
-     // Navigator.pop(context);
+      // Navigator.pop(context);
       print('Payment Error ==> $error');
     }
+    provider.isLoading(false);
     // ignore: use_build_context_synchronously
-  Navigator.pop(context);
+    Navigator.pop(context);
     provider.isLoading(false);
   }
 }

@@ -3,9 +3,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shoppingyou/service/state/fuel_manager.dart';
+import 'package:shoppingyou/service/state/loaders.dart';
 import 'package:shoppingyou/service/state/ui_manager.dart';
 import 'mobile/routes/routes.dart';
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,8 +19,7 @@ void main() async {
               storageBucket: 'shopingyou-64e8e.appspot.com',
             )
           : null);
-      
-      
+
   runApp(const MyApp());
 }
 
@@ -33,8 +32,11 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => UiProvider(),
         ),
-         ChangeNotifierProvider(
+        ChangeNotifierProvider(
           create: (context) => FuelManager(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => LoaderProvider(),
         ),
       ],
       child: MaterialApp(
@@ -47,7 +49,7 @@ class MyApp extends StatelessWidget {
         ),
         initialRoute: '/',
         routes: getApplicationRoutes(),
-      //  home: const HomeSplash(),
+        //  home: const HomeSplash(),
       ),
     );
   }
