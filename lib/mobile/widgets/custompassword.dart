@@ -33,6 +33,7 @@ class CustomPassword extends StatelessWidget {
           ),
           TextField(
             onChanged: (value) async {
+              _provider.addPassword(value);
               await _provider.initializePref();
               _provider.pref!.setString(passwordKey, value);
               log(_provider.pref!.getString(passwordKey).toString());
@@ -55,7 +56,8 @@ class CustomPassword extends StatelessWidget {
                     },
                     child: Text("Show")),
                 suffixStyle: const TextStyle(color: Color(0xff5956E9))),
-            obscureText: context.watch<UiProvider>().showPassword ? false :  true,
+            obscureText:
+                context.watch<UiProvider>().showPassword ? false : true,
           )
         ],
       ),

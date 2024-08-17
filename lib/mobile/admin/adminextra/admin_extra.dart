@@ -5,6 +5,8 @@ import 'package:shoppingyou/mobile/widgets/delete_modal.dart';
 import 'package:shoppingyou/models/order_model.dart';
 import 'package:shoppingyou/models/prod_model.dart';
 import 'package:shoppingyou/service/constant.dart';
+import 'package:shoppingyou/service/controller.dart';
+import 'package:shoppingyou/service/operations.dart';
 
 import '../../../designParams/params.dart';
 
@@ -21,7 +23,8 @@ class AdminDealItem extends StatelessWidget {
       this.price = 0,
       this.title = 'Title of the product',
       this.assetPath = '',
-      required this.id, required this.adminDeals})
+      required this.id,
+      required this.adminDeals})
       : super(key: key);
 
   @override
@@ -32,7 +35,7 @@ class AdminDealItem extends StatelessWidget {
       minimumSize: const Size(22, 22),
       maximumSize: const Size(22, 22),
       elevation: 0,
-      primary: Color(0xFF7DCCEC),
+      //  primary: Color(0xFF7DCCEC),
     );
 
     return Container(
@@ -88,9 +91,9 @@ class AdminDealItem extends StatelessWidget {
                           ),
                           const SizedBox(height: 10),
                           SizedBox(
-                            width: MediaQuery.of(context).size.width / 2.5,
+                            width: MediaQuery.of(context).size.width / 3,
                             child: Text(
-                              product.address!,
+                              product.address!.split("|||").first,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
@@ -112,16 +115,59 @@ class AdminDealItem extends StatelessWidget {
                               ),
                             ),
                           ),
+                          InkWell(
+                            onTap: () async {
+                              final trackData =
+                                  product.address!.split("|||").last;
+                              final lat = trackData.split(":::").first;
+                              final long = trackData.split(":::").last;
+
+                              Operations.track(lat, long);
+                            },
+                            child: SizedBox(
+                              width: MediaQuery.of(context).size.width / 3,
+                              child: Text(
+                                "See Location",
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 15,
+                                    color: Colors.green),
+                              ),
+                            ),
+                          ),
                           const SizedBox(height: 5),
                           SizedBox(
                             width: MediaQuery.of(context).size.width / 2.5,
                             child: Text(
-                              product.phone!,
+                              Operations.convertDate(
+                                  product.timestamp!.toDate()),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 15,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                          const SizedBox(height: 5),
+                          InkWell(
+                            onTap: () async {
+                              Utility.launchInWebViewOrVC(Uri.parse(
+                                  "https://wa.me/${product.phone}/?text=Hello there. Your fuel is ready for pickup. Best regards from Quickly"));
+                            },
+                            child: SizedBox(
+                              width: MediaQuery.of(context).size.width / 2.5,
+                              child: Text(
+                                product.phone!,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 15,
+                                ),
                               ),
                             ),
                           ),

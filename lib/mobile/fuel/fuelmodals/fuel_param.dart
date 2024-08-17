@@ -1,9 +1,9 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shoppingyou/service/constant.dart';
+import 'package:shoppingyou/service/operations.dart';
 import 'package:shoppingyou/service/state/fuel_manager.dart';
 import 'package:shoppingyou/service/state/ui_manager.dart';
 
@@ -29,7 +29,7 @@ class FuelParam extends StatelessWidget {
                 child: Row(
                   children: [
                     const Text(
-                      'Selling price at ',
+                      'Price Per Litre',
                       style: const TextStyle(
                           color: Color(0xff868686), fontSize: 16.0),
                     ),
@@ -50,14 +50,14 @@ class FuelParam extends StatelessWidget {
           ),
           Row(
             children: [
-              const Icon(FontAwesomeIcons.gasPump,
-                  size: 24.0, color: Colors.grey, semanticLabel: 'Pump'),
+              const Icon(Icons.local_gas_station,
+                  size: 24.0, color: Colors.grey),
               Padding(
                 padding: const EdgeInsets.only(left: 10.0),
                 child: Row(
                   children: [
                     const Text(
-                      'Select Litres. ',
+                      'Available Litres ',
                       style: const TextStyle(
                           color: Color(0xff868686), fontSize: 16.0),
                     ),
@@ -73,22 +73,63 @@ class FuelParam extends StatelessWidget {
               ),
             ],
           ),
+          const SizedBox(
+            height: 5,
+          ),
+          Row(
+            children: [
+              const Icon(
+                Icons.payment,
+                size: 24.0,
+                color: Colors.grey,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 10.0),
+                child: Row(
+                  children: [
+                    const Text(
+                      'Amount. ',
+                      style: const TextStyle(
+                          color: Color(0xff868686), fontSize: 16.0),
+                    ),
+                    Text(
+                      '${Operations.convertToCurrency((stream.selectedLires * stream.sellingPrice))} +',
+                      style: const TextStyle(
+                          color: Colors.red,
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.w700),
+                    ),
+                    Text(
+                      ' ${Operations.convertToCurrency(stream.fare)}(Fares)',
+                      style: TextStyle(
+                          color: Colors.blue.shade900,
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.w700),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 30,
+          ),
           Container(
             height: 50,
             child: Slider.adaptive(
               activeColor: Colors.blue.shade900,
               inactiveColor: Colors.black12,
-              max: stream.availableLitres <= 25 ? 5 : 25,
+              max: stream.availableLitres <= 75 ? 5 : 5,
               min: 0,
               autofocus: true,
-              divisions: stream.availableLitres <= 25 ? 1 : 5,
+              divisions: stream.availableLitres <= 75 ? 5 : 1,
               label: "${stream.selectedLires.toString()}Litres",
               value: stream.selectedLires,
               onChanged: (val) async {
                 _provider.addSelectedLitres(val);
               },
               onChangeStart: (val) {
-                _provider.addSelectedLitres(5);
+                _provider.addSelectedLitres(1);
               },
             ),
           ),

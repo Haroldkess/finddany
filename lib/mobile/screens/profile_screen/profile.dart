@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shoppingyou/designParams/params.dart';
@@ -8,258 +9,374 @@ import 'package:shoppingyou/responsive/responsive_config.dart';
 import 'package:shoppingyou/service/constant.dart';
 import 'package:shoppingyou/service/controller.dart';
 import 'package:shoppingyou/service/state/ui_manager.dart';
+import 'package:in_app_update/in_app_update.dart';
+import 'package:rate_us_on_store/rate_us_on_store.dart';
 
 import '../other_screens/no_history.dart';
 
-class Profile extends StatelessWidget {
+class Profile extends StatefulWidget {
   const Profile({Key? key}) : super(key: key);
 
   @override
+  State<Profile> createState() => _ProfileState();
+}
+
+class _ProfileState extends State<Profile> {
+  AppUpdateInfo? _updateInfo;
+
+  GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
+
+  bool _flexibleUpdateAvailable = false;
+
+  // Platform messages are asynchronous, so we initialize in an async method.
+  Future<void> checkForUpdate() async {
+    InAppUpdate.checkForUpdate().then((info) {
+      setState(() {
+        _updateInfo = info;
+      });
+    }).catchError((e) {
+      showSnack(e.toString());
+    });
+  }
+
+  void showSnack(String text) {
+    if (_scaffoldKey.currentContext != null) {
+      ScaffoldMessenger.of(_scaffoldKey.currentContext!)
+          .showSnackBar(SnackBar(content: Text(text)));
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F8),
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        title: const Text(
-          'My profile',
-          style: TextStyle(
-              fontFamily: 'Raleway',
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: const Color(0xFFF5F5F8),
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          title: const Text(
+            'My profile',
+            style: TextStyle(
+                fontFamily: 'Raleway',
+                color: Color(0xff5956E9),
+                fontSize: 18.0,
+                fontWeight: FontWeight.w700),
+          ),
+          leading: IconButton(
+            onPressed: () {
+              Navigator.pushReplacementNamed(context, 'homeScreen');
+            },
+            icon: const Icon(
+              Icons.arrow_back,
               color: Color(0xff5956E9),
-              fontSize: 18.0,
-              fontWeight: FontWeight.w700),
-        ),
-        leading: IconButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          icon: const Icon(
-            Icons.arrow_back,
-            color: Color(0xff5956E9),
+            ),
           ),
         ),
-      ),
-      body: Stack(
-        children: [
-          // Padding(
-          //     padding: const EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 20.0),
-          //     child: ShaderMask(
-          //         shaderCallback: (rect) {
-          //           return const LinearGradient(
-          //             begin: Alignment.center,
-          //             end: FractionalOffset.bottomCenter,
-          //             colors: [Colors.black, Colors.transparent],
-          //           ).createShader(rect);
-          //         },
-          //         blendMode: BlendMode.dstIn,
-          //         child: const Image(
-          //             image: AssetImage('assets/images/splash.png'),
-          //             fit: BoxFit.contain))),
-        
-        
-          Container(
-            padding: EdgeInsets.symmetric(
-                vertical: 0,
-                horizontal: Responsive.isDesktop(context)
-                    ? MediaQuery.of(context).size.width * 0.15
-                    : 0),
-            child: SingleChildScrollView(
-              child: Column(
-                // mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  const SizedBox(height: 30),
+        body: Stack(
+          children: [
+            // Padding(
+            //     padding: const EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 20.0),
+            //     child: ShaderMask(
+            //         shaderCallback: (rect) {
+            //           return const LinearGradient(
+            //             begin: Alignment.center,
+            //             end: FractionalOffset.bottomCenter,
+            //             colors: [Colors.black, Colors.transparent],
+            //           ).createShader(rect);
+            //         },
+            //         blendMode: BlendMode.dstIn,
+            //         child: const Image(
+            //             image: AssetImage('assets/images/splash.png'),
+            //             fit: BoxFit.contain))),
 
-                  // const SizedBox(height: 60),
-                  Card(
-                    elevation: 0,
-                    margin: const EdgeInsets.only(bottom: 10),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 30, vertical: 15),
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            const SizedBox(height: 12),
-                            Stack(
-                              clipBehavior: Clip.none,
-                              alignment: AlignmentDirectional.topCenter,
-                              fit: StackFit.loose,
-                              children: <Widget>[
-                                Container(
-                                  height: 60,
-                                  width: double.infinity,
-                                  decoration: const BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(20),
-                                          topRight: Radius.circular(20))),
-                                ),
-                                Positioned(
-                                  top: -60,
-                                  child: CircleAvatar(
-                                    radius: 50,
-                                    backgroundImage: context
-                                            .watch<UiProvider>()
-                                            .imageUrl
-                                            .isEmpty
-                                        ? const AssetImage(
-                                                'assets/images/avatar.png')
-                                            as ImageProvider
-                                        : CachedNetworkImageProvider(context
-                                            .watch<UiProvider>()
-                                            .imageUrl),
+            Container(
+              padding: EdgeInsets.symmetric(
+                  vertical: 0,
+                  horizontal: Responsive.isDesktop(context)
+                      ? MediaQuery.of(context).size.width * 0.15
+                      : 0),
+              child: SingleChildScrollView(
+                child: Column(
+                  // mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    const SizedBox(height: 30),
+
+                    // const SizedBox(height: 60),
+                    Card(
+                      elevation: 0,
+                      margin: const EdgeInsets.only(bottom: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 30, vertical: 15),
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              const SizedBox(height: 20),
+                              Stack(
+                                clipBehavior: Clip.none,
+                                alignment: AlignmentDirectional.topCenter,
+                                fit: StackFit.loose,
+                                children: <Widget>[
+                                  Container(
+                                    height: 60,
+                                    width: double.infinity,
+                                    decoration: const BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(20),
+                                            topRight: Radius.circular(20))),
                                   ),
-                                )
-                              ],
-                            ),
-                            context.watch<UiProvider>().isLoading
-                                ? const CupertinoActivityIndicator(
-                                    radius: 30,
-                                    color: kPrimaryColor,
+                                  Positioned(
+                                    top: -60,
+                                    child: CircleAvatar(
+                                      radius: 50,
+                                      backgroundImage: context
+                                              .watch<UiProvider>()
+                                              .imageUrl
+                                              .isEmpty
+                                          ? const AssetImage(
+                                                  'assets/images/avatar.png')
+                                              as ImageProvider
+                                          : CachedNetworkImageProvider(context
+                                              .watch<UiProvider>()
+                                              .imageUrl),
+                                    ),
                                   )
-                                : InkWell(
-                                    onTap: () {
-                                      Utility.pickProfileImage(context);
-                                    },
-                                    child: const Padding(
-                                      padding: EdgeInsets.only(bottom: 5),
-                                      child: Text(
-                                        'Tap to change',
-                                        style: TextStyle(
-                                            fontSize: 10,
-                                            fontFamily: 'Raleway',
-                                            color: Color(0xFF5956E9),
-                                            fontWeight: FontWeight.w400),
+                                ],
+                              ),
+                              context.watch<UiProvider>().isLoading
+                                  ? const CupertinoActivityIndicator(
+                                      radius: 30,
+                                      color: kPrimaryColor,
+                                    )
+                                  : InkWell(
+                                      onTap: () {
+                                        Utility.pickProfileImage(context);
+                                      },
+                                      child: const Padding(
+                                        padding: EdgeInsets.only(bottom: 5),
+                                        child: Text(
+                                          'Tap to change',
+                                          style: TextStyle(
+                                              fontSize: 10,
+                                              fontFamily: 'Raleway',
+                                              color: Color(0xFF5956E9),
+                                              fontWeight: FontWeight.w400),
+                                        ),
                                       ),
                                     ),
+                              Text(
+                                context.watch<UiProvider>().name,
+                                style: const TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.w600),
+                              ),
+                              const SizedBox(height: 12),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                // mainAxisAlignment: MainAxisAlignment.end,
+                                children: <Widget>[
+                                  const Icon(Icons.location_on_outlined),
+                                  const SizedBox(
+                                    width: 10,
                                   ),
-                            Text(
-                              context.watch<UiProvider>().name,
-                              style: const TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.w600),
-                            ),
-                            const SizedBox(height: 12),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              // mainAxisAlignment: MainAxisAlignment.end,
-                              children: <Widget>[
-                                const Icon(Icons.location_on_outlined),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Row(
-                                      children: [
-                                        const Text('Address: '),
-                                        SizedBox(
-                                          width: Responsive.isDesktop(context)
-                                              ? null
-                                              : MediaQuery.of(context)
-                                                      .size
-                                                      .width /
-                                                  2,
-                                          child: Text(
-                                            context
-                                                        .watch<UiProvider>()
-                                                        .address ==
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Row(
+                                        children: [
+                                          const Text('Address: '),
+                                          SizedBox(
+                                            width: Responsive.isDesktop(context)
+                                                ? null
+                                                : MediaQuery.of(context)
+                                                        .size
+                                                        .width /
+                                                    2,
+                                            child: Text(
+                                              context
+                                                              .watch<
+                                                                  UiProvider>()
+                                                              .address ==
+                                                          'null' ||
+                                                      context
+                                                          .watch<UiProvider>()
+                                                          .address
+                                                          .isEmpty
+                                                  ? 'Your address added'
+                                                  : context
+                                                          .watch<UiProvider>()
+                                                          .address
+                                                          .contains("|||")
+                                                      ? context
+                                                          .watch<UiProvider>()
+                                                          .address
+                                                          .split("|||")
+                                                          .first
+                                                      : context
+                                                          .watch<UiProvider>()
+                                                          .address,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        width: Responsive.isDesktop(context)
+                                            ? null
+                                            : MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                1.5,
+                                        child: Text(context
+                                                    .watch<UiProvider>()
+                                                    .phoneNumber ==
+                                                'null'
+                                            ? 'No Phone'
+                                            : context
+                                                .watch<UiProvider>()
+                                                .phoneNumber),
+                                      ),
+                                      SizedBox(
+                                        width: Responsive.isDesktop(context)
+                                            ? null
+                                            : MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                1.5,
+                                        child: Text(
+                                            context.watch<UiProvider>().email ==
                                                     'null'
-                                                ? 'Your address added'
+                                                ? 'No Email'
                                                 : context
                                                     .watch<UiProvider>()
-                                                    .address,
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      width: Responsive.isDesktop(context)
-                                          ? null
-                                          : MediaQuery.of(context).size.width /
-                                              1.5,
-                                      child: Text(context
-                                                  .watch<UiProvider>()
-                                                  .phoneNumber ==
-                                              'null'
-                                          ? 'No Phone'
-                                          : context
-                                              .watch<UiProvider>()
-                                              .phoneNumber),
-                                    ),
-                                    SizedBox(
-                                      width: Responsive.isDesktop(context)
-                                          ? null
-                                          : MediaQuery.of(context).size.width /
-                                              1.5,
-                                      child: Text(context
-                                                  .watch<UiProvider>()
-                                                  .email ==
-                                              'null'
-                                          ? 'No Email'
-                                          : context.watch<UiProvider>().email),
-                                    ),
-                                  ],
-                                )
-                              ],
-                            )
-                          ]),
+                                                    .email),
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              )
+                            ]),
+                      ),
                     ),
-                  ),
-                  ProfileOption(
-                      text: 'Edit Profile',
-                      onClick: () {
-                        Modals.editProfileInfo(context);
-                      }),
-                  ProfileOption(
-                      text: 'Shipping address',
-                      onClick: () {
-                        Modals.shipping(context);
-                      }),
-                  ProfileOption(
-                      text: 'Order history',
-                      onClick: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const DoneDeals()));
-                      }),
-                  ProfileOption(
-                      text: 'Cards',
-                      onClick: () {
-                        Modals.cards(context);
-                      }),
-                  ProfileOption(
-                      text: 'Notifications',
-                      onClick: () {
-                        Modals.notification(context);
-                      }),
-                ],
+                    ProfileOption(
+                        text: 'Edit Profile',
+                        onClick: () {
+                          Modals.editProfileInfo(context);
+                        }),
+                    ProfileOption(
+                        text: 'Shipping address',
+                        onClick: () {
+                          Modals.shipping(context);
+                        }),
+                    // ProfileOption(
+                    //     text: 'Order history',
+                    //     onClick: () {
+                    //       Navigator.push(
+                    //           context,
+                    //           MaterialPageRoute(
+                    //               builder: (context) => const DoneDeals()));
+                    //     }),
+                    ProfileOption(
+                        text: 'Cards',
+                        onClick: () {
+                          Modals.cards(context);
+                        }),
+                    ProfileOption(
+                        text: 'Notifications',
+                        onClick: () {
+                          Modals.notification(context);
+                        }),
+                    ProfileOption(
+                        text: 'Rate Us',
+                        onClick: () {
+                          RateUsOnStore(
+                                  androidPackageName: "com.vigortech.app",
+                                  appstoreAppId: "")
+                              .launch();
+                        }),
+
+                    if (!kIsWeb)
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ProfileOption(
+                              text: 'Check for flexible update',
+                              onClick: () async {
+                                await checkForUpdate();
+                                if (!kIsWeb) {
+                                  _updateInfo?.updateAvailability ==
+                                          UpdateAvailability.updateAvailable
+                                      ? () {
+                                          InAppUpdate.startFlexibleUpdate()
+                                              .then((_) {
+                                            setState(() {
+                                              _flexibleUpdateAvailable = true;
+                                            });
+                                          }).catchError((e) {
+                                            showSnack(e.toString());
+                                          });
+                                        }
+                                      : null;
+                                }
+                              }),
+                          ProfileOption(
+                              text: 'Check for immediate update',
+                              onClick: () async {
+                                await checkForUpdate();
+                                if (!kIsWeb) {
+                                  _updateInfo?.updateAvailability ==
+                                          UpdateAvailability.updateAvailable
+                                      ? () {
+                                          InAppUpdate.performImmediateUpdate()
+                                              .whenComplete(() {
+                                            InAppUpdate.completeFlexibleUpdate()
+                                                .then((_) {
+                                              showSnack("Success!");
+                                            }).catchError((e) {
+                                              showSnack(e.toString());
+                                            });
+                                          }).catchError((e) {
+                                            showSnack(e.toString());
+                                            return AppUpdateResult
+                                                .inAppUpdateFailed;
+                                          });
+                                        }
+                                      : null;
+                                }
+                              }),
+                          ProfileOption(
+                              text: 'Delete account',
+                              onClick: () {
+                                Modals.deleteAccount(context);
+                              }),
+                        ],
+                      ),
+                  ],
+                ),
               ),
             ),
-          ),
-          Positioned(
-            top: 2.0,
-            right: 2.0,
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width / 2,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  const Image(
-                      image: AssetImage('assets/images/EllipseMorado.png')),
-                ],
+            Positioned(
+              top: 2.0,
+              right: 2.0,
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width / 2,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    const Image(
+                        image: AssetImage('assets/images/EllipseMorado.png')),
+                  ],
+                ),
               ),
-            ),
-          )
-       
-        ],
+            )
+          ],
+        ),
       ),
     );
   }

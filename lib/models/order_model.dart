@@ -21,6 +21,7 @@ class OrderModel {
   late bool? recieved;
   late String? shopName;
   late String? shopPhoneNumber;
+  late Timestamp? timestamp;
 
   OrderModel(
       {this.id,
@@ -42,38 +43,42 @@ class OrderModel {
       this.phone,
       this.recieved,
       required this.shopName,
-      required this.shopPhoneNumber});
+      required this.shopPhoneNumber,
+      this.timestamp});
 
   factory OrderModel.fromDoc(DocumentSnapshot doc) {
     return OrderModel(
-        id: doc.id,
-        name: doc['name']!,
-        userId: doc['userId'],
-        images: doc['images'],
-        description: doc['description'],
-        price: doc["price"],
-        oldPrice: doc['oldPrice'],
-        stock: doc["stock"],
-        color: doc["color"],
-        size: doc['size'],
-        category: doc['category'],
-        quantity: doc['quantity'],
-        ShopId: doc['ShopId'],
-        address: doc['address'],
-        buyerName: doc['buyerName'],
-        email: doc['email'],
-        phone: doc['phone'],
-        recieved: doc['recieved'],
-        shopName: doc['shopName'],
-        shopPhoneNumber: doc['shopPhoneNumber']);
+      id: doc.id,
+      name: doc['name']!,
+      userId: doc['userId'],
+      images: doc['images'],
+      description: doc['description'],
+      price: doc["price"],
+      oldPrice: doc['oldPrice'],
+      stock: doc["stock"],
+      color: doc["color"],
+      size: doc['size'],
+      category: doc['category'],
+      quantity: doc['quantity'],
+      ShopId: doc['ShopId'],
+      address: doc['address'],
+      buyerName: doc['buyerName'],
+      email: doc['email'],
+      phone: doc['phone'],
+      recieved: doc['recieved'],
+      shopName: doc['shopName'],
+      shopPhoneNumber: doc['shopPhoneNumber'],
+      timestamp: doc['timestamp'],
+    );
   }
 }
 
 class AdminOrderUserId {
   late String? id;
 
-
-  AdminOrderUserId({required this.id,});
+  AdminOrderUserId({
+    required this.id,
+  });
 
   factory AdminOrderUserId.fromDoc(DocumentSnapshot doc) {
     return AdminOrderUserId(id: doc.id);
@@ -128,26 +133,27 @@ class AdminOrderModel {
 
   factory AdminOrderModel.fromDoc(DocumentSnapshot doc) {
     return AdminOrderModel(
-        id: doc.id,
-        name: doc['name']!,
-        userId: doc['userId'],
-        images: doc['images'],
-        description: doc['description'],
-        price: doc["price"],
-        oldPrice: doc['oldPrice'],
-        stock: doc["stock"],
-        color: doc["color"],
-        size: doc['size'],
-        category: doc['category'],
-        quantity: doc['quantity'],
-        ShopId: doc['ShopId'],
-        address: doc['address'],
-        buyerName: doc['buyerName'],
-        email: doc['email'],
-        phone: doc['phone'],
-        recieved: doc['recieved'],
-        shopName: doc['shopName'],
-        shopPhoneNumber: doc['shopPhoneNumber'],
-        timestamp: doc['timestamp'],);
+      id: doc.id,
+      name: doc['name']!,
+      userId: doc['userId'],
+      images: doc['images'],
+      description: doc['description'],
+      price: doc["price"],
+      oldPrice: doc['oldPrice'],
+      stock: doc["stock"],
+      color: doc["color"],
+      size: doc['size'],
+      category: doc['category'],
+      quantity: doc['quantity'],
+      ShopId: doc['ShopId'],
+      address: doc['address'],
+      buyerName: doc['buyerName'],
+      email: doc['email'],
+      phone: doc['phone'],
+      recieved: doc['recieved'],
+      shopName: doc['shopName'],
+      shopPhoneNumber: doc['shopPhoneNumber'],
+      timestamp: doc['timestamp'],
+    );
   }
 }

@@ -31,33 +31,27 @@ class _HomeSplashState extends State<HomeSplash> {
   final List<dynamic> _contacts = [
     {
       'name': 'Shoe',
-      'avatar':
-          'assets/images/splash.png',
+      'avatar': 'assets/images/splash.png',
     },
     {
       'name': 'Shirt',
-      'avatar':
-          'assets/images/no_favorites.png',
+      'avatar': 'assets/images/no_favorites.png',
     },
     {
       'name': 'bURGER',
-      'avatar':
-          'assets/images/no_history.png',
+      'avatar': 'assets/images/no_history.png',
     },
     {
       'name': 'game',
-      'avatar':
-          'assets/images/avatar.png',
+      'avatar': 'assets/images/avatar.png',
     },
     {
       'name': 'headset',
-      'avatar':
-          'assets/images/itemnotfound.png',
+      'avatar': 'assets/images/itemnotfound.png',
     },
     {
       'name': 'pepsi',
-      'avatar':
-          'assets/images/no_connection.png',
+      'avatar': 'assets/images/no_connection.png',
     }
   ];
   @override
@@ -87,13 +81,11 @@ class _HomeSplashState extends State<HomeSplash> {
 
   Future<void> callApis(context) async {
     await Controls.getHomeProduct(context, false);
-    await Controls.getQuickPicksProduct(context);
-    await Controls.getSliderProduct(context);
-    await Controls.getPopularProduct(context);
-    await Controls.getJustForYouProduct(context);
-    await Controls.getCategory(context);
-   
-  
+    //  await Controls.getQuickPicksProduct(context);
+    // await Controls.getSliderProduct(context);
+    //  await Controls.getPopularProduct(context);
+    //  await Controls.getJustForYouProduct(context);
+    // await Controls.getCategory(context);
 
     await saveInfo(context);
     //await Future.delayed(const Duration(seconds: 3));
@@ -138,131 +130,90 @@ class _HomeSplashState extends State<HomeSplash> {
         .addAdress(pref.getString(addressKey)!);
     await Provider.of<UiProvider>(context, listen: false)
         .addPhone(pref.getString(phoneKey)!);
-            await Provider.of<UiProvider>(context, listen: false)
+    await Provider.of<UiProvider>(context, listen: false)
         .addHasShop(pref.getBool(hasShopKey)!);
-                    await Provider.of<UiProvider>(context, listen: false)
+    await Provider.of<UiProvider>(context, listen: false)
         .addMail(pref.getString(emailKey)!);
 
-         await Provider.of<UiProvider>(context, listen: false)
+    await Provider.of<UiProvider>(context, listen: false)
         .addDp(pref.getString(dpKey)!);
     print('done getting some user info');
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      backgroundColor: Colors.blue.shade900,
-      body: Stack(children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[
-            const Image(image: AssetImage('assets/images/EllipseMorado.png')),
-            ShaderMask(
-                shaderCallback: (rect) {
-                  return const LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: FractionalOffset.center,
-                    colors: [Colors.black, Colors.transparent],
-                  ).createShader(rect);
-                },
-                blendMode: BlendMode.dstIn,
-                child: const Image(
-                    image: AssetImage('assets/images/EllipseRosa.png'),
-                    fit: BoxFit.contain)),
-          ],
-        ),
-        Align(
-          alignment: Alignment.center,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Stack(
-                alignment: Alignment.center,
-                children:  const [
-                  // FadeInUp(
-                  //   duration: Duration(milliseconds: 500),
-                  //   child: Container(
-                  //     width: double.infinity,
-                  //     height: 300,
-                  //     padding: EdgeInsets.all(90.0),
-                  //     decoration: BoxDecoration(
-                  //       shape: BoxShape.circle,
-                  //       color: Colors.blue.shade900,
-                  //       border:
-                  //           Border.all(color: Colors.blue.shade900, width: 2.0),
-                  //     ),
-                  //     child: Stack(
-                  //       children: [
-                  //         for (double i = 0; i < 360; i += 60)
-                  //           AnimChain(
-                  //                   initialDelay:
-                  //                       Duration(milliseconds: i.toInt()))
-                  //               .next(
-                  //                 wait: Duration(milliseconds: 1000),
-                  //                 widget: AnimatedAlignPositioned(
-                  //                   dx: 0,
-                  //                   dy: 150,
-                  //                   duration: Duration(seconds: 1),
-                  //                   rotateDegrees: 0,
-                  //                   touch: Touch.middle,
-                  //                   child: user(0, i),
-                  //                 ),
-                  //               )
-                  //               .next(
-                  //                 wait: Duration(seconds: 2),
-                  //                 widget: AnimatedAlignPositioned(
-                  //                   dx: i / 560,
-                  //                   dy: 150,
-                  //                   duration: Duration(seconds: 1),
-                  //                   rotateDegrees: i,
-                  //                   touch: Touch.middle,
-                  //                   child: user(0, i),
-                  //                 ),
-                  //               ),
-                  //       ],
-                  //     ),
-                  //   ),
-                  // ),
-                  
-                  
-                   Center(
-                    child: CupertinoActivityIndicator(
-                      color: Colors.white,
-                      radius: 30,
+    return SafeArea(
+      child: Scaffold(
+        //   resizeToAvoidBottomInset: false,
+        backgroundColor: Colors.blue.shade900,
+        body: Stack(children: [
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+          //   children: <Widget>[
+          //     const Image(image: AssetImage('assets/images/EllipseMorado.png')),
+          //     ShaderMask(
+          //         shaderCallback: (rect) {
+          //           return const LinearGradient(
+          //             begin: Alignment.topCenter,
+          //             end: FractionalOffset.center,
+          //             colors: [Colors.black, Colors.transparent],
+          //           ).createShader(rect);
+          //         },
+          //         blendMode: BlendMode.dstIn,
+          //         child: const Image(
+          //             image: AssetImage('assets/images/EllipseRosa.png'),
+          //             fit: BoxFit.contain)),
+          //   ],
+          // ),
+          Align(
+            alignment: Alignment.center,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    FadeInRight(
+                      child: Text(
+                        'Quick',
+                        style: TextStyle(
+                            fontFamily: 'Raleway',
+                            color: Colors.white,
+                            fontSize: 25.0,
+                            fontWeight: FontWeight.w700),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 50,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const  [
-                   Text(
-                    'Findd ',
-                    style: TextStyle(
-                        fontFamily: 'Raleway',
-                        color: Colors.white,
-                        fontSize: 25.0,
-                        fontWeight: FontWeight.w700),
-                  ),
-                   Text(
-                    'Any ',
-                    style: TextStyle(
-                        fontFamily: 'Raleway',
-                        color: Colors.red,
-                        fontSize: 25.0,
-                        fontWeight: FontWeight.w700),
-                  ),
-        
-                ],
-              ),
-            ],
-          ),
-        )
-      ]),
+                    FadeInLeft(
+                      child: Text(
+                        'liy ',
+                        style: TextStyle(
+                            fontFamily: 'Raleway',
+                            color: Colors.red,
+                            fontSize: 25.0,
+                            fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                // const Stack(
+                //   alignment: Alignment.center,
+                //   children: [
+                //     Center(
+                //       child: CupertinoActivityIndicator(
+                //         color: Colors.white,
+                //         radius: 15,
+                //       ),
+                //     ),
+                //   ],
+                // ),
+              ],
+            ),
+          )
+        ]),
+      ),
     );
   }
 
@@ -283,8 +234,7 @@ class _HomeSplashState extends State<HomeSplash> {
                 child: CircleAvatar(
                   radius: 30,
                   backgroundColor: Colors.blue.shade900,
-                  backgroundImage:
-                      AssetImage(_contacts[index]['avatar']),
+                  backgroundImage: AssetImage(_contacts[index]['avatar']),
                 ),
               ),
             ],

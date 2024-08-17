@@ -3,7 +3,8 @@ import 'package:shoppingyou/service/constant.dart';
 
 class ForgetPasswordEmail extends StatelessWidget {
   final TextEditingController controller;
-  const ForgetPasswordEmail({Key? key, required this.controller}) : super(key: key);
+  const ForgetPasswordEmail({Key? key, required this.controller})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -12,10 +13,12 @@ class ForgetPasswordEmail extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
       child: Column(
         children: <Widget>[
-          Row(
-            children: const [
+          const Row(
+            children: [
               Icon(Icons.email,
-                  size: 24.0, color: kPrimaryColor, semanticLabel: 'email icon'),
+                  size: 24.0,
+                  color: kPrimaryColor,
+                  semanticLabel: 'email icon'),
               Padding(
                 padding: EdgeInsets.only(left: 10.0),
                 child: Text(

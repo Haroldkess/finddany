@@ -1,83 +1,49 @@
-<!DOCTYPE html>
-<html>
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
   <base href="$FLUTTER_BASE_HREF">
-
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="Get your day to day products here on Finddany. We deliver to your door step.">
+  <meta name="description" content="Own a virtual oil business and earn passive income with your mobile phone, Buy fuel at best prices we deliver to your door step.">
 
-  <!-- iOS meta tags & icons -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="Finddany">
+  <meta name="apple-mobile-web-app-title" content="Quickliy">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
-  <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
-
-  <title>Finddany</title>
+  <title>Quickliy</title>
   <link rel="manifest" href="manifest.json">
 
-  <script>
-    // The value below is injected by flutter build, do not touch.
-    var serviceWorkerVersion = null;
-  </script>
-  <!-- This script adds the flutter initialization JS code -->
-  <script src="flutter.js" defer></script>
-</head>
-<body>
-  <script src="https://js.paystack.co/v1/inline.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
-  <script >
-  
-    // TODO: Add SDKs for Firebase products that you want to use
-    // https://firebase.google.com/docs/web/setup#available-libraries
-  
-    // Your web app's Firebase configuration
-    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-    const firebaseConfig = {
-      apiKey: "AIzaSyDTuLm2CKHeLZ2O-6gpjMltwPzWatdG0wI",
-      authDomain: "shopingyou-64e8e.firebaseapp.com",
-      projectId: "shopingyou-64e8e",
-      storageBucket: "shopingyou-64e8e.appspot.com",
-      messagingSenderId: "693568913009",
-      appId: "1:693568913009:web:3db7b370bd7afeca0e25d0",
-      measurementId: "G-WZ4JE1Y47D"
-    };
-  
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    firebase.analytics()
-  </script>
+  <!-- Preload main CSS and fonts -->
+  <link rel="preload" href="styles/main.css" as="style">
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="preload" href="flutter.js" as="script">
+  <link rel="preload" href="assets/images/splash.png" as="image">
+
+  <!-- Load Flutter and Paystack scripts asynchronously -->
+   <!-- Load scripts asynchronously -->
+   <script src="flutter.js" defer></script>
+
+   <script src="https://unpkg.com/@geolocator/geolocator-web@2.1.5/dist/geolocator_web.js" async></script>
+   <script src="https://js.paystack.co/v1/inline.js" async></script>
+   <script src="paystack_interop.js" async></script>
+ 
 
   <script>
+    var serviceWorkerVersion = null;
+  </script>
+</head>
+<body>
+  <script>
     window.addEventListener('load', function(ev) {
-      // Download main.dart.js
       _flutter.loader.loadEntrypoint({
         serviceWorker: {
           serviceWorkerVersion: serviceWorkerVersion,
+        },
+        onEntrypointLoaded: function(engineInitializer) {
+          engineInitializer.initializeEngine().then(function(appRunner) {
+            appRunner.runApp();
+          });
         }
-      }).then(function(engineInitializer) {
-        return engineInitializer.initializeEngine();
-      }).then(function(appRunner) {
-        return appRunner.runApp();
       });
     });
   </script>

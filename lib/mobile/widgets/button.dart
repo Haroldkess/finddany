@@ -22,14 +22,17 @@ class Button extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ButtonStyle style = ElevatedButton.styleFrom(
-      primary: color,
+      backgroundColor: color,
       textStyle: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
     );
     return ConstrainedBox(
       constraints: BoxConstraints.tightFor(width: width, height: height),
       child: ElevatedButton(
         style: style,
-        child: Text(text),
+        child: Text(
+          text,
+          style: TextStyle(color: Colors.white),
+        ),
         onPressed: onClick,
       ),
     );
@@ -66,7 +69,7 @@ class LargeButton extends Button {
   }) : super(
           key: key,
           color: const Color(0xFF5956E9),
-          fontSize: 20,
+          fontSize: 16,
           height: 70,
           width: 314,
           onClick: onClick,

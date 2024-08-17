@@ -25,7 +25,7 @@ class OrderedUsers extends StatelessWidget {
       minimumSize: const Size(22, 22),
       maximumSize: const Size(22, 22),
       elevation: 0,
-      primary: Color(0xFF7DCCEC),
+      //  primary: Color(0xFF7DCCEC),
     );
 
     return InkWell(

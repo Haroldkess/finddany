@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_paystack_client/flutter_paystack_client.dart';
+// import 'package:flutter_paystack_client/flutter_paystack_client.dart';
 import 'package:provider/provider.dart';
 import 'package:shoppingyou/mobile/screens/checkoutdialogues/live_in.dart';
 import 'package:shoppingyou/mobile/widgets/address_form.dart';
+import 'package:shoppingyou/mobile/widgets/edit_address.dart';
+import 'package:shoppingyou/mobile/widgets/edit_delivery.dart';
+import 'package:shoppingyou/mobile/widgets/edit_phone.dart';
 import 'package:shoppingyou/mobile/widgets/payment_methods.dart';
 import 'package:shoppingyou/mobile/widgets/phone_form.dart';
 import 'package:shoppingyou/mobile/widgets/toast.dart';
@@ -46,7 +49,7 @@ class _CheckoutState extends State<Checkout> {
       });
     });
 
-    await PaystackClient.initialize(key);
+    //await PaystackClient.initialize(key);
     await DatabaseService.getDeliveryPrices(context);
   }
 
@@ -77,146 +80,161 @@ class _CheckoutState extends State<Checkout> {
       body: Container(
         padding: EdgeInsets.symmetric(
             horizontal: Responsive.isDesktop(context) ? 50 : 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            SizedBox(height: 30),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                const Text(
-                  'Shipping information',
-                  style: TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                TextButton(
-                  style: TextButton.styleFrom(
-                    textStyle: const TextStyle(
-                      fontSize: 15,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              SizedBox(height: 30),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  const Text(
+                    'Shipping information',
+                    style: TextStyle(
+                      fontSize: 17,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  onPressed: () {
-                    showModalBottomSheet<void>(
-                      context: context,
-                      isScrollControlled: true,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(24.0),
-                          topRight: Radius.circular(24.0),
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      textStyle: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    onPressed: () {
+                      showModalBottomSheet<void>(
+                        context: context,
+                        isScrollControlled: true,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(24.0),
+                            topRight: Radius.circular(24.0),
+                          ),
+                        ),
+                        builder: (BuildContext context) {
+                          return Padding(
+                            padding: EdgeInsets.only(
+                                top: MediaQuery.of(context).size.width * 0.09,
+                                bottom:
+                                    MediaQuery.of(context).viewInsets.bottom),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                  const EditPhone(),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  const EditAddress(),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  const EditDeliveryAddress(),
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                  context.watch<UiProvider>().loading
+                                      ? CupertinoActivityIndicator(
+                                          radius: 15,
+                                          color: Colors.blue.shade900,
+                                        )
+                                      : Button(
+                                          text: 'Add',
+                                          width: 200,
+                                          height: 50,
+                                          onClick: () async {
+                                            await _provider.initializePref();
+                                            // ignore: use_build_context_synchronously
+                                            await Controls
+                                                .shippingInfoController(
+                                                    context);
+
+                                            _provider.addAdress(_provider.pref!
+                                                .getString(addressKey)!);
+                                            _provider.addUserCordinates(
+                                                _provider.pref!
+                                                    .getString(cordinatesKey)!);
+                                            _provider.addPhone(_provider.pref!
+                                                .getString(phoneKey)!);
+                                            // ignore: use_build_context_synchronously
+                                            Navigator.pop(context);
+                                          },
+                                          color: Colors.blue.shade900,
+                                        ),
+                                  const SizedBox(
+                                    height: 50,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    child: const Text('change'),
+                  )
+                ],
+              ),
+              ShippingInfo(),
+              PaymentMethods(),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  const Text(
+                    'Total',
+                    style: TextStyle(fontSize: 17),
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        '${currencySymbol()}',
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF5956E9),
                         ),
                       ),
-                      builder: (BuildContext context) {
-                        return Padding(
-                          padding: EdgeInsets.only(
-                              top:
-                                  MediaQuery.of(context).size.width * 0.09,bottom: MediaQuery.of(context).viewInsets.bottom),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              const ShippingAddress(),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              const ShippingPhone(),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              context.watch<UiProvider>().loading
-                                  ? CupertinoActivityIndicator(
-                                      radius: 30,
-                                      color: Colors.blue.shade900,
-                                    )
-                                  : Button(
-                                      text: 'Add',
-                                      width: 200,
-                                      height: 50,
-                                      onClick: () async {
-                                        await _provider.initializePref();
-                                        // ignore: use_build_context_synchronously
-                                        await Controls.shippingInfoController(
-                                            context);
-
-                                        _provider.addAdress(_provider.pref!
-                                            .getString(addressKey)!);
-                                        _provider.addPhone(_provider.pref!
-                                            .getString(phoneKey)!);
-                                        // ignore: use_build_context_synchronously
-                                        Navigator.pop(context);
-                                      },
-                                      color: Colors.blue.shade900,
-                                    ),
-                              const SizedBox(
-                                height: 50,
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    );
-                  },
-                  child: const Text('change'),
-                )
-              ],
-            ),
-            ShippingInfo(),
-            Expanded(child: PaymentMethods()),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                const Text(
-                  'Total',
-                  style: TextStyle(fontSize: 17),
-                ),
-                Row(
-                  children: [
-                    Text(
-                      '${currencySymbol()}',
-                      style: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF5956E9),
+                      Text(
+                        numberFormat.format(int.tryParse(
+                            context.watch<UiProvider>().totalPrice.toString())),
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF5956E9),
+                        ),
                       ),
-                    ),
-                    Text(
-                      numberFormat.format(int.tryParse(
-                          context.watch<UiProvider>().totalPrice.toString())),
-                      style: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF5956E9),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            SizedBox(height: 30),
-            LargeButton(
-              text: 'Confirm and pay',
-              onClick: () async {
-              //  showToast("Please wait", successBlue);
-                await DatabaseService.getDeliveryPrices(context);
-                // ignore: use_build_context_synchronously
-                if (Provider.of<UiProvider>(context, listen: false)
-                    .locationType
-                    .isEmpty) {
-                  showToast2(context,"Kindly select delivery type", isError: true);
-                } else {
+                    ],
+                  ),
+                ],
+              ),
+              SizedBox(height: 30),
+              LargeButton(
+                text: 'Confirm and pay',
+                onClick: () async {
+                  //  showToast("Please wait", successBlue);
+                  await DatabaseService.getDeliveryPrices(context);
                   // ignore: use_build_context_synchronously
-                  liveIn(context);
-                }
-              },
-            ),
-            SizedBox(height: 20)
-          ],
+                  if (Provider.of<UiProvider>(context, listen: false)
+                      .locationType
+                      .isEmpty) {
+                    showToast2(context, "Kindly select delivery type",
+                        isError: true);
+                  } else {
+                    // ignore: use_build_context_synchronously
+                    liveIn(context);
+                  }
+                },
+              ),
+              SizedBox(height: 20)
+            ],
+          ),
         ),
       ),
     );

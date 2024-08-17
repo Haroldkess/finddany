@@ -5,6 +5,9 @@ import 'package:flutter/cupertino.dart';
 const String nameKey = 'name';
 const String phoneKey = 'phone';
 const String addressKey = 'address';
+
+const String cordinatesKey = 'cordinatesKey';
+const String deliveryKey = 'deliveryKey';
 const String hasShopKey = 'hasShop';
 const String countryKey = 'country';
 const String stateKey = 'state';
@@ -17,7 +20,7 @@ String passwordKey = 'password';
 String errorRed = '#d60d0d';
 String successBlue = '#00008b';
 
-String appName = 'Findd';
+String appName = 'Vigor';
 
 const Color kPrimaryColor = Color(0xff5956E9);
 

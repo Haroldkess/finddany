@@ -5,6 +5,7 @@ import 'package:shoppingyou/models/prod_model.dart';
 import 'package:shoppingyou/service/constant.dart';
 
 import '../../designParams/params.dart';
+import 'dart:ui' as ui;
 
 class CardItem extends StatelessWidget {
   const CardItem({
@@ -129,11 +130,18 @@ class CardItem extends StatelessWidget {
 
 class ProductItem extends StatelessWidget {
   final ProductModel? product;
-  const ProductItem( {Key? key, this.product}) : super(key: key);
+  const ProductItem({Key? key, this.product}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
- //   ${currencySymbol()}${numberFormat.format(widget.shopProd!.sellPrice)}
+    String imageUrl = product!.images!.first!;
+    //   ${currencySymbol()}${numberFormat.format(widget.shopProd!.sellPrice)}
+    // https://github.com/flutter/flutter/issues/41563
+    // ignore: undefined_prefixed_name
+    // ui.platformViewRegistry.registerViewFactory(
+    //   imageUrl,
+    //   (int _) => ImageElement()..src = imageUrl,
+    // );
     return Center(
       child: Card(
         shape: const RoundedRectangleBorder(
@@ -143,8 +151,12 @@ class ProductItem extends StatelessWidget {
           splashColor: const Color(0xff5956E9).withOpacity(0.5),
           hoverColor: Color(0xff5956E9).withOpacity(0.5),
           onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) =>  SingleItem(product: product,)));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => SingleItem(
+                          product: product,
+                        )));
           },
           child: SizedBox(
             width: 220,
@@ -167,6 +179,10 @@ class ProductItem extends StatelessWidget {
                       image: DecorationImage(
                           image: CachedNetworkImageProvider(
                               product!.images!.first!.toString()))),
+
+                  // child: HtmlElementView(
+                  //   viewType: imageUrl,
+                  // ),
                   // child: Padding(
                   //   padding: const EdgeInsets.symmetric(horizontal: 10.0),
                   //   child: Center(

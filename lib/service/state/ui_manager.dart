@@ -34,12 +34,15 @@ class UiProvider extends ChangeNotifier {
   String name = '';
   String email = '';
   String address = '';
+  String cordinates = '';
   String phoneNumber = '';
+  String password = "";
   int totalPrice = 0;
   bool hasShop = false;
 
   List<Uint8List> images = [];
   Uint8List? profileDp;
+  File? profileDp2;
   List shopYouCategory = [];
   String selectedCategory = 'Select Category';
   String imageUrl = '';
@@ -96,6 +99,16 @@ class UiProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> addPassword(String val) async {
+    password = val;
+    notifyListeners();
+  }
+
+  Future<void> addUserCordinates(String va) async {
+    cordinates = va;
+    notifyListeners();
+  }
+
   Future<void> addAdress(String addres) async {
     address = addres;
     notifyListeners();
@@ -117,12 +130,13 @@ class UiProvider extends ChangeNotifier {
     doneDeals = order;
     notifyListeners();
   }
-   void addFuelDeals(List<FuelModel> fuels) {
+
+  void addFuelDeals(List<FuelModel> fuels) {
     fuelOrders = fuels;
     notifyListeners();
   }
 
-    void addAdminFuelDeals(List<FuelModel> fuelsOrder) {
+  void addAdminFuelDeals(List<FuelModel> fuelsOrder) {
     adminFuelOrders = fuelsOrder;
     notifyListeners();
   }
@@ -189,6 +203,11 @@ class UiProvider extends ChangeNotifier {
 
   void addProfilePicture(Uint8List pic) {
     profileDp = pic;
+    notifyListeners();
+  }
+
+  void addProfilePicture2(File pic) {
+    profileDp2 = pic;
     notifyListeners();
   }
 

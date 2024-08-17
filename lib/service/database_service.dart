@@ -15,6 +15,7 @@ import 'package:shoppingyou/models/order_model.dart';
 import 'package:shoppingyou/models/prod_model.dart';
 import 'package:shoppingyou/models/user_model.dart';
 import 'package:shoppingyou/service/constant.dart';
+import 'package:shoppingyou/service/controller.dart';
 import 'package:shoppingyou/service/state/ui_manager.dart';
 import 'package:uuid/uuid.dart';
 
@@ -61,7 +62,6 @@ class DatabaseService {
       }).catchError((e) async {
         finished = false;
         showToast('$e', errorRed);
-        
       });
     } catch (e) {
       finished = false;
@@ -85,15 +85,17 @@ class DatabaseService {
             finished = true;
           }).catchError((e) {
             finished = false;
-          
-             showToast2(context, 'Something went wrong you seem to be offline',isError: true);
+
+            showToast2(context, 'Something went wrong you seem to be offline',
+                isError: true);
           })
         : await productDir.limit(30).get().whenComplete(() {
             finished = true;
           }).catchError((e) {
             finished = false;
-         
-            showToast2(context, 'Something went wrong you seem to be offline',isError: true);
+
+            showToast2(context, 'Something went wrong you seem to be offline',
+                isError: true);
           }).onError((error, stackTrace) async {
             // print(stackTrace.toString());
             return Future.error(Exception(error));
@@ -453,10 +455,9 @@ class DatabaseService {
       await Future.forEach(adminDeals, (element) async {
         await init.runTransaction((transaction) async {
           transaction.update(
-              FirebaseFirestore.instance
-                  .collection('adminOrder')
-                  .doc(id)
-                  .collection("orders")
+              userDir
+                  .doc(element.ShopId)
+                  .collection("newOrders")
                   .doc(element.id),
               {
                 'recieved': val,
@@ -473,6 +474,10 @@ class DatabaseService {
                 .collection("orders")
                 .doc(element.id),
           );
+
+          transaction.delete(
+            userDir.doc(element.ShopId).collection("newOrders").doc(element.id),
+          );
         });
       }).whenComplete(() async {
         await init.runTransaction((transaction) async {
@@ -482,6 +487,73 @@ class DatabaseService {
         });
         finished = true;
       });
+      showToast('done', successBlue);
+    } catch (e) {
+      finished = false;
+      showToast('$e', errorRed);
+    }
+
+    return finished;
+  }
+
+//process single order
+
+  static Future<bool> processSingleOrder(String id, bool val, bool isAdmin,
+      [String? userId]) async {
+    late bool finished;
+
+    try {
+      if (isAdmin) {
+        await init.runTransaction((transaction) async {
+          transaction.update(
+              FirebaseFirestore.instance.collection('adminFuel').doc(id), {
+            'recieved': val,
+          });
+        });
+      } else {
+        await init.runTransaction((transaction) async {
+          transaction
+              .update(userDir.doc(userId).collection("fuelHistory").doc(id), {
+            'recieved': val,
+          });
+        });
+      }
+
+      finished = true;
+
+      // await Future.forEach(adminDeals, (element) async {
+      //   await init.runTransaction((transaction) async {
+      //     transaction.update(
+      //         FirebaseFirestore.instance
+      //             .collection('adminOrder')
+      //             .doc(id)
+      //             .collection("orders")
+      //             .doc(element.id),
+      //         {
+      //           'recieved': val,
+      //         });
+
+      //     transaction.update(
+      //         userDir.doc(id).collection("orderHistory").doc(element.id), {
+      //       'recieved': val,
+      //     });
+      //     transaction.delete(
+      //       FirebaseFirestore.instance
+      //           .collection('adminOrder')
+      //           .doc(id)
+      //           .collection("orders")
+      //           .doc(element.id),
+      //     );
+      //   });
+
+      // }).whenComplete(() async {
+      //   await init.runTransaction((transaction) async {
+      //     transaction.delete(
+      //       FirebaseFirestore.instance.collection('adminOrder').doc(id),
+      //     );
+      //   });
+      //   finished = true;
+      // });
       showToast('done', successBlue);
     } catch (e) {
       finished = false;
@@ -524,11 +596,15 @@ class DatabaseService {
       await init.runTransaction((transaction) async {
         transaction.update(userDir.doc(pref.getString(userIdKey)), {
           'phoneNumber': pref.getString(phoneKey),
-          'userLocation': pref.getString(addressKey),
+          'userLocation':
+              "${pref.getString(addressKey)} ||| ${pref.getString(cordinatesKey)}",
         });
       }).whenComplete(() async {
         await Provider.of<UiProvider>(context, listen: false)
             .addAdress(pref.getString(addressKey)!);
+
+        await Provider.of<UiProvider>(context, listen: false)
+            .addUserCordinates(pref.getString(cordinatesKey)!);
         // ignore: use_build_context_synchronously
         await Provider.of<UiProvider>(context, listen: false)
             .addPhone(pref.getString(phoneKey)!);
@@ -571,23 +647,21 @@ class DatabaseService {
     return finished;
   }
 
-    //send feedback
-  static Future<bool> sendFuelMeter(BuildContext context, FuelUpdate fuel) async {
+  //send feedback
+  static Future<bool> sendFuelMeter(
+      BuildContext context, FuelUpdate fuel) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     late bool finished;
     try {
       await init.runTransaction((transaction) async {
         transaction.set(
-            FirebaseFirestore.instance
-                .collection("fuel")
-                .doc("oneGod1997"),
-            {
-              'fare': fuel.fare,
-              'litres': fuel.litres,
-              'maxlitres':fuel.maxLitres,
-              'minlitres': fuel.minLitres,
-              'price': fuel.price
-            });
+            FirebaseFirestore.instance.collection("fuel").doc("oneGod1997"), {
+          'fare': fuel.fare,
+          'litres': fuel.litres,
+          'maxlitres': fuel.maxLitres,
+          'minlitres': fuel.minLitres,
+          'price': fuel.price
+        });
       }).whenComplete(() async {
         finished = true;
       }).catchError((e) async {
@@ -609,13 +683,17 @@ class DatabaseService {
       await init.runTransaction((transaction) async {
         transaction.update(userDir.doc(pref.getString(userIdKey)), {
           'phoneNumber': pref.getString(phoneKey),
-          'userLocation': pref.getString(addressKey),
+          'userLocation':
+              "${pref.getString(addressKey)} ||| ${pref.getString(cordinatesKey)}",
           'email': pref.getString(emailKey),
           'name': pref.getString(nameKey),
         });
       }).whenComplete(() async {
         await Provider.of<UiProvider>(context, listen: false)
             .addAdress(pref.getString(addressKey)!);
+
+        await Provider.of<UiProvider>(context, listen: false)
+            .addUserCordinates(pref.getString(cordinatesKey)!);
         // ignore: use_build_context_synchronously
         await Provider.of<UiProvider>(context, listen: false)
             .addPhone(pref.getString(phoneKey)!);
@@ -787,7 +865,9 @@ class DatabaseService {
         homeSnapshot.docs.map((doc) => OrderModel.fromDoc(doc)).toList();
 
     // ignore: use_build_context_synchronously
-    Provider.of<UiProvider>(context, listen: false).addOneDeals(prodPost);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<UiProvider>(context, listen: false).addOneDeals(prodPost);
+    });
 
     log('done with getting deals');
     return finished;
@@ -813,8 +893,13 @@ class DatabaseService {
     List<FuelModel> fuelPost =
         homeSnapshot.docs.map((doc) => FuelModel.fromDoc(doc)).toList();
 
-    // ignore: use_build_context_synchronously
-    Provider.of<UiProvider>(context, listen: false).addFuelDeals(fuelPost);
+    try {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Provider.of<UiProvider>(context, listen: false).addFuelDeals(fuelPost);
+      });
+    } catch (e) {
+      print(e);
+    }
 
     log('done with getting fuel deals');
     return finished;
@@ -823,7 +908,7 @@ class DatabaseService {
   static Future<bool> getAdminFuelDeal(BuildContext context) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     late bool finished;
-    print(pref.getString(userIdKey));
+    //  print(pref.getString(userIdKey));
     QuerySnapshot homeSnapshot = await FirebaseFirestore.instance
         .collection('adminFuel')
         .orderBy("timestamp", descending: true)
@@ -839,7 +924,10 @@ class DatabaseService {
         homeSnapshot.docs.map((doc) => FuelModel.fromDoc(doc)).toList();
 
     // ignore: use_build_context_synchronously
-    Provider.of<UiProvider>(context, listen: false).addAdminFuelDeals(fuelPost);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<UiProvider>(context, listen: false)
+          .addAdminFuelDeals(fuelPost);
+    });
 
     log('done with getting fuel deals');
     return finished;
@@ -848,32 +936,58 @@ class DatabaseService {
 // get admin deals
   static Future<bool> getAdminOrderDeal(BuildContext context) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    UiProvider data = Provider.of<UiProvider>(context, listen: false);
     late bool finished;
-    QuerySnapshot homeSnapshot = await adminOrdersDir.get().whenComplete(() {
+    //  print(pref.getString(userIdKey));
+    QuerySnapshot homeSnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(pref.getString(userIdKey))
+        .collection("newOrders")
+        .orderBy("timestamp", descending: true)
+        .get()
+        .whenComplete(() {
       finished = true;
     }).catchError((e) {
       finished = false;
       showToast('You might be offline kindly check your internet connection',
           errorRed);
     });
-
-    List<AdminOrderUserId> userId =
-        homeSnapshot.docs.map((doc) => AdminOrderUserId.fromDoc(doc)).toList();
-
-    // List<AdminOrderModel> prodPost =
-    //     homeSnapshot.docs.map((doc) => AdminOrderModel.fromDoc(doc)).toList();
+    List<AdminOrderModel> deals =
+        homeSnapshot.docs.map((doc) => AdminOrderModel.fromDoc(doc)).toList();
+    // print(deals.length);
 
     // ignore: use_build_context_synchronously
-    data.addAdminUserId(userId);
 
-    List<UserModel> users = await getOrderedUsersFromIds(data.orderIds);
+    Provider.of<UiProvider>(context, listen: false).addAdminUserDeals(deals);
 
-    data.addUsersOrdered(users);
+    log('done with getting fuel deals');
+    return finished;
+    // SharedPreferences pref = await SharedPreferences.getInstance();
+    // UiProvider data = Provider.of<UiProvider>(context, listen: false);
+    // late bool finished;
+    // QuerySnapshot homeSnapshot = await adminOrdersDir.get().whenComplete(() {
+    //   finished = true;
+    // }).catchError((e) {
+    //   finished = false;
+    //   showToast('You might be offline kindly check your internet connection',
+    //       errorRed);
+    // });
+
+    // List<AdminOrderUserId> userId =
+    //     homeSnapshot.docs.map((doc) => AdminOrderUserId.fromDoc(doc)).toList();
+
+    // // List<AdminOrderModel> prodPost =
+    // //     homeSnapshot.docs.map((doc) => AdminOrderModel.fromDoc(doc)).toList();
+
+    // // ignore: use_build_context_synchronously
+    // data.addAdminUserId(userId);
+
+    // List<UserModel> users = await getOrderedUsersFromIds(userId);
+
+    // data.addUsersOrdered(users);
 
     // print(users.first.email);
 
-    log('done with getting deals');
+    print('done with getting deals');
     return finished;
   }
 
@@ -885,6 +999,7 @@ class DatabaseService {
     late List<UserModel> users = [];
 
     try {
+      print("trying to ge ids users ${id.length}");
       await Future.forEach(id, (element) async {
         DocumentSnapshot homeSnapshot = await userDir.doc(element.id).get();
         users.add(UserModel(

@@ -5,8 +5,26 @@ import 'package:provider/provider.dart';
 import 'package:shoppingyou/service/constant.dart';
 import 'package:shoppingyou/service/state/ui_manager.dart';
 
-class EditAddress extends StatelessWidget {
+class EditAddress extends StatefulWidget {
   const EditAddress({Key? key}) : super(key: key);
+
+  @override
+  State<EditAddress> createState() => _EditAddressState();
+}
+
+class _EditAddressState extends State<EditAddress> {
+  TextEditingController? controller;
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      UiProvider provider = Provider.of<UiProvider>(context, listen: false);
+      setState(() {
+        controller =
+            TextEditingController(text: provider.address.split("|||").first);
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,21 +38,23 @@ class EditAddress extends StatelessWidget {
           Row(
             children: const [
               Icon(Icons.location_on_outlined,
-                  size: 24.0, color: Colors.grey, semanticLabel: 'address icon'),
+                  size: 24.0,
+                  color: Colors.grey,
+                  semanticLabel: 'address icon'),
               Padding(
                 padding: EdgeInsets.only(left: 10.0),
                 child: Text(
-                  'Your address will be used for default delivery',
+                  'Your address will be for default delivery',
                   style: TextStyle(color: Color(0xff868686), fontSize: 16.0),
                 ),
               ),
             ],
           ),
           TextField(
+            controller: controller,
             onChanged: (value) async {
               await _provider.initializePref();
               _provider.pref!.setString(addressKey, value);
-       
             },
             decoration: const InputDecoration(
               enabledBorder: UnderlineInputBorder(

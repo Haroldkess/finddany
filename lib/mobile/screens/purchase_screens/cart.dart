@@ -266,7 +266,7 @@ class InfoAlert extends StatelessWidget {
                 iconSize: 28,
               ),
               const Text(
-                'Relax. Your order will be delivered shortly',
+                'Relax. Your order will be delivered',
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
                   fontSize: 10,
@@ -389,12 +389,14 @@ class FuelAlertError extends StatelessWidget {
 }
 
 class FuelAlertError2 extends StatelessWidget {
-  const FuelAlertError2({Key? key}) : super(key: key);
+  final String? alert;
+  final Color? color;
+  const FuelAlertError2({Key? key, this.alert, this.color}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Colors.green.withOpacity(0.8),
+      color: color ?? Colors.green.withOpacity(0.8),
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15.0),
@@ -413,10 +415,11 @@ class FuelAlertError2 extends StatelessWidget {
               onPressed: () {},
               iconSize: 28,
             ),
-            const Expanded(
+            Expanded(
               child: Text(
-                'Do not exit page or close browser when your transaction/payment is being processed',
-                style: TextStyle(
+                alert ??
+                    'Do not exit page or close browser when your transaction/payment is being processed',
+                style: const TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 14,
                     color: Colors.white),

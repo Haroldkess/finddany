@@ -1,6 +1,7 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shoppingyou/mobile/widgets/delete_modal.dart';
 
@@ -127,6 +128,7 @@ class CustomDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     UiProvider provide = Provider.of<UiProvider>(context, listen: false);
+    //  log(provide.hasShop.toString());
     return Material(
       color: Color(0xff5956E9),
       child: SafeArea(
@@ -189,7 +191,7 @@ class CustomDrawer extends StatelessWidget {
               // ),
 
               Container(
-                padding: EdgeInsets.only(left: 38, top: 17, bottom: 50),
+                padding: EdgeInsets.only(left: 38, top: 17, bottom: 10),
                 alignment: Alignment.centerLeft,
                 child: CircleAvatar(
                   radius: 50,
@@ -204,7 +206,10 @@ class CustomDrawer extends StatelessWidget {
               provide.hasShop
                   ? ListTile(
                       onTap: () => Navigator.pushNamed(context, 'Admin'),
-                      leading: Icon(Icons.dashboard),
+                      leading: Icon(
+                        Icons.dashboard,
+                        size: 20,
+                      ),
                       title: Text(
                         'Vendor',
                         style: TextStyle(
@@ -217,34 +222,62 @@ class CustomDrawer extends StatelessWidget {
                   ? Container(
                       width: 206,
                       child: const Padding(
-                        padding: EdgeInsets.only(left: 74, right: 0),
+                        padding: EdgeInsets.only(left: 10, right: 0),
                         child: Divider(
                           color: Color(0xfff4f4f8),
                         ),
                       ))
                   : SizedBox.shrink(),
-                   ListTile(
-                onTap: () => Navigator.pushNamed(context, 'Fuel'),
-                leading: const  Icon(FontAwesomeIcons.gasPump),
-                title:  const Text(
-                  'Fuel Orders',
-                  style: TextStyle(
-                    fontFamily: 'Raleway',
-                  ),
-                ),
-              ),
-              Container(
-                  width: 206,
-                  child: const Padding(
-                    padding: EdgeInsets.only(left: 74, right: 0),
-                    child: Divider(
-                      color: Color(0xfff4f4f8),
-                    ),
-                  )),
+              // ListTile(
+              //   onTap: () => Navigator.pushNamed(context, 'Fuel'),
+              //   leading: const Icon(
+              //     FontAwesomeIcons.gasPump,
+              //     size: 20,
+              //   ),
+              //   title: const Text(
+              //     'Fuel Orders',
+              //     style: TextStyle(
+              //       fontFamily: 'Raleway',
+              //     ),
+              //   ),
+              // ),
+              // Container(
+              //     width: 206,
+              //     child: const Padding(
+              //       padding: EdgeInsets.only(left: 10, right: 0),
+              //       child: Divider(
+              //         color: Color(0xfff4f4f8),
+              //       ),
+              //     )),
+
+              // ListTile(
+              //   onTap: () => Navigator.pushNamed(context, 'deals'),
+              //   leading: const Icon(
+              //     FontAwesomeIcons.glassWaterDroplet,
+              //     size: 20,
+              //   ),
+              //   title: const Text(
+              //     'Water Orders',
+              //     style: TextStyle(
+              //       fontFamily: 'Raleway',
+              //     ),
+              //   ),
+              // ),
+              // Container(
+              //     width: 206,
+              //     child: const Padding(
+              //       padding: EdgeInsets.only(left: 10, right: 0),
+              //       child: Divider(
+              //         color: Color(0xfff4f4f8),
+              //       ),
+              //     )),
 
               ListTile(
                 onTap: () => Modals.sendFeedBack(context, controller),
-                leading: const Icon(Icons.feedback_outlined),
+                leading: const Icon(
+                  Icons.feedback_outlined,
+                  size: 20,
+                ),
                 title: const Text(
                   'Feedback',
                   style: TextStyle(
@@ -255,7 +288,7 @@ class CustomDrawer extends StatelessWidget {
               Container(
                   width: 206,
                   child: const Padding(
-                    padding: EdgeInsets.only(left: 74, right: 0),
+                    padding: EdgeInsets.only(left: 10, right: 0),
                     child: Divider(
                       color: Color(0xfff4f4f8),
                     ),

@@ -1,4 +1,4 @@
-import 'package:animated_text_kit/animated_text_kit.dart';
+// import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shoppingyou/mobile/widgets/popping.dart';
@@ -11,20 +11,17 @@ import 'carditem.dart';
 import 'caroussel.dart';
 import 'category_card.dart';
 
-
-
-
 class ProductList extends StatelessWidget {
   const ProductList({super.key});
 
   @override
   Widget build(BuildContext context) {
-       var height = MediaQuery.of(context).size.height;
+    var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     return Column(
       children: [
         Row(
-          children:  [
+          children: [
             Padding(
               padding: const EdgeInsets.only(left: 10),
               child: Text(
@@ -32,7 +29,7 @@ class ProductList extends StatelessWidget {
                 style: TextStyle(
                     fontFamily: 'Raleway',
                     color: const Color(0xff5956E9),
-                    fontSize: Responsive.isMobile(context) ? 20 :  30.0,
+                    fontSize: Responsive.isMobile(context) ? 20 : 30.0,
                     fontWeight: FontWeight.w700),
               ),
             ),
@@ -83,16 +80,18 @@ class ProductList extends StatelessWidget {
                     : MediaQuery.of(context).size.height * 0.7,
                 child: GridView.builder(
                   itemCount: Responsive.isDesktop(context)
-                      ?  context.watch<UiProvider>().popular.length
+                      ? context.watch<UiProvider>().popular.length
                       : Responsive.isTablet(context)
                           ? context.watch<UiProvider>().popular.length
                           : context.watch<UiProvider>().popular.length,
                   physics: NeverScrollableScrollPhysics(),
                   itemBuilder: (context, index) {
-                     final ProductModel prod =
-                          Provider.of<UiProvider>(context, listen: false)
-                              .popular[index];
-                    return ProductItem(product: prod,);
+                    final ProductModel prod =
+                        Provider.of<UiProvider>(context, listen: false)
+                            .popular[index];
+                    return ProductItem(
+                      product: prod,
+                    );
                   },
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: Responsive.isDesktop(context)
@@ -106,17 +105,17 @@ class ProductList extends StatelessWidget {
             : const SizedBox.shrink(),
 
         Row(
-          children:const [
+          children: const [
             Padding(
               padding: EdgeInsets.only(top: 5.0, left: 10),
-              child:  Text(
-                      'Trending',
-                      style: TextStyle(
-                          fontFamily: 'Raleway',
-                          color: Color(0xff5956E9),
-                          fontSize: 30.0,
-                          fontWeight: FontWeight.w700),
-                    ),
+              child: Text(
+                'Trending',
+                style: TextStyle(
+                    fontFamily: 'Raleway',
+                    color: Color(0xff5956E9),
+                    fontSize: 30.0,
+                    fontWeight: FontWeight.w700),
+              ),
               //  Text(
               //   'Order online collect in store',
               //   style: TextStyle(
@@ -137,7 +136,7 @@ class ProductList extends StatelessWidget {
         ),
 
         Row(
-          children:  [
+          children: [
             Padding(
               padding: EdgeInsets.only(left: 10),
               child: Text(
@@ -161,10 +160,9 @@ class ProductList extends StatelessWidget {
             itemCount: context.watch<UiProvider>().prod.length,
             physics: const NeverScrollableScrollPhysics(),
             itemBuilder: (context, index) {
-               final ProductModel prod =
-                          Provider.of<UiProvider>(context, listen: false)
-                              .prod[index];
-              return  ProductItem(
+              final ProductModel prod =
+                  Provider.of<UiProvider>(context, listen: false).prod[index];
+              return ProductItem(
                 product: prod,
               );
             },
@@ -174,11 +172,11 @@ class ProductList extends StatelessWidget {
                     : Responsive.isTablet(context)
                         ? 3
                         : 2,
-                mainAxisExtent: 300,mainAxisSpacing: 1.0),
+                mainAxisExtent: 300,
+                mainAxisSpacing: 1.0),
           ),
         ),
       ],
     );
- 
   }
 }

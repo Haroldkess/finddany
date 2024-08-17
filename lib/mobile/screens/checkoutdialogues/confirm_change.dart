@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shoppingyou/mobile/widgets/edit_address.dart';
+import 'package:shoppingyou/mobile/widgets/edit_delivery.dart';
+import 'package:shoppingyou/mobile/widgets/edit_phone.dart';
 import 'package:shoppingyou/mobile/widgets/payment_modal.dart';
 import 'package:shoppingyou/mobile/widgets/toast.dart';
 
@@ -74,11 +77,15 @@ Future<void> confirmLocation(BuildContext context) async {
                                     const SizedBox(
                                       height: 20,
                                     ),
-                                    const ShippingAddress(),
+                                    const EditPhone(),
                                     const SizedBox(
                                       height: 10,
                                     ),
-                                    const ShippingPhone(),
+                                    const EditAddress(),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    EditDeliveryAddress(),
                                     const SizedBox(
                                       height: 20,
                                     ),
@@ -101,6 +108,9 @@ Future<void> confirmLocation(BuildContext context) async {
                                               _provider.addAdress(_provider
                                                   .pref!
                                                   .getString(addressKey)!);
+                                              _provider.addUserCordinates(
+                                                  _provider.pref!.getString(
+                                                      cordinatesKey)!);
                                               _provider.addPhone(_provider.pref!
                                                   .getString(phoneKey)!);
                                               // ignore: use_build_context_synchronously
@@ -130,7 +140,10 @@ Future<void> confirmLocation(BuildContext context) async {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   TextButton(
-                    child: Text('yes', style: TextStyle(color: Colors.blue[900]),),
+                    child: Text(
+                      'yes',
+                      style: TextStyle(color: Colors.blue[900]),
+                    ),
                     onPressed: () async {
                       late int _price;
                       UiProvider shipPrice =
@@ -138,17 +151,25 @@ Future<void> confirmLocation(BuildContext context) async {
                       if (shipPrice.locationType == "Home") {
                         _price = shipPrice.deliveryPrices.first;
                       } else {
-                        _price =  shipPrice.deliveryPrices.last;
+                        _price = shipPrice.deliveryPrices.last;
                       }
                       if (_provider.name == 'null' ||
                           _provider.phoneNumber == 'null' ||
                           _provider.address == 'null') {
-                        showToast2(context,'Please add a valid shipping info', isError: true);
+                        showToast2(context, 'Please add a valid shipping info',
+                            isError: true);
+                        return;
+                      }
+
+                      if (_provider.cordinates == 'null' ||
+                          _provider.cordinates.isEmpty) {
+                        showToast2(context, 'Please add a valid Exact Location',
+                            isError: true);
                         return;
                       }
                       showModalBottomSheet<void>(
                         context: context,
-                        isDismissible: true,
+                        isDismissible: false,
                         shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(24.0),
@@ -164,7 +185,10 @@ Future<void> confirmLocation(BuildContext context) async {
                     },
                   ),
                   TextButton(
-                    child: Text('No', style: TextStyle(color: Colors.red[900]),),
+                    child: Text(
+                      'No',
+                      style: TextStyle(color: Colors.red[900]),
+                    ),
                     onPressed: () async {
                       Navigator.pop(context);
                     },

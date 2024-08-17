@@ -1,9 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shoppingyou/main.dart';
 import 'package:shoppingyou/mobile/widgets/edit_address.dart';
+import 'package:shoppingyou/mobile/widgets/edit_delivery.dart';
 import 'package:shoppingyou/mobile/widgets/edit_email.dart';
 import 'package:shoppingyou/mobile/widgets/edit_name.dart';
 import 'package:shoppingyou/mobile/widgets/edit_phone.dart';
@@ -27,6 +29,141 @@ import 'forget_password_email.dart';
 import 'notification_view.dart';
 
 class Modals {
+  static void deleteAccount(BuildContext cont) {
+    showModalBottomSheet(
+      backgroundColor: Colors.transparent,
+      context: cont,
+      builder: (BuildContext context) {
+        return Container(
+          height: MediaQuery.of(context).size.height,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+          ),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(
+                        Icons.clear,
+                        color: Colors.red,
+                      ))
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Text(
+                    'Your account will be deleted from quickly',
+                    style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                        color: Colors.black),
+                  ),
+                ],
+              ),
+              Expanded(
+
+                  // height: context.watch<SizeProvider>().screenHeight /  2.5,
+                  child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  context.watch<UiProvider>().loading
+                      ? const SizedBox.shrink()
+                      : Button(
+                          text: 'Cancel',
+                          color: Colors.blue.shade900,
+                          width: 150,
+                          onClick: () async {
+                            Navigator.pop(context);
+                          },
+                          height: 60,
+                          fontSize: 20,
+                        ),
+                  context.watch<UiProvider>().loading
+                      ? const SizedBox.shrink()
+                      : const SizedBox(
+                          width: 10,
+                        ),
+                  context.watch<UiProvider>().loading
+                      ? const CupertinoActivityIndicator(
+                          radius: 30,
+                          color: Colors.red,
+                        )
+                      : Button(
+                          text: 'Delete',
+                          color: Colors.red,
+                          width: 150,
+                          onClick: () async {
+                            UiProvider ui =
+                                Provider.of<UiProvider>(context, listen: false);
+                            ui.load(true);
+                            SharedPreferences pref =
+                                await SharedPreferences.getInstance();
+                            final FirebaseAuth _auth = FirebaseAuth.instance;
+                            User? user = _auth.currentUser;
+                            if (user != null) {
+                              try {
+                                // Re-authenticate the user
+                                AuthCredential credential =
+                                    EmailAuthProvider.credential(
+                                  email: user.email!,
+                                  password: pref.getString(
+                                      passwordKey)!, // You need to ask the user for their password
+                                );
+                                await user
+                                    .reauthenticateWithCredential(credential);
+
+                                // Delete the user
+                                await user.delete().whenComplete(() {
+                                  Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => const MyApp()),
+                                      (route) => false);
+                                });
+                                print("User deleted successfully");
+                              } catch (e) {
+                                print("Error deleting user: $e");
+                                showToast("Failed to delete user", errorRed);
+                              }
+                            } else {
+                              //  print("No user is currently signed in");
+                              showToast(
+                                  "Failed to delete user. Please sign in  first",
+                                  errorRed);
+                            }
+
+                            // bool returned =
+                            //     await Controls.deleteCartItem(context, id);
+
+                            // if (returned) {
+                            //   // ignore: use_build_context_synchronously
+                            //   await Controls.cartCollectionControl(context);
+                            //   // ignore: use_build_context_synchronously
+                            //   Navigator.pop(context);
+                            // }
+                          },
+                          height: 60,
+                          fontSize: 20,
+                        ),
+                ],
+              ))
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   static void deleteFromCart(BuildContext cont, String id) {
     showModalBottomSheet(
       backgroundColor: Colors.transparent,
@@ -35,7 +172,7 @@ class Modals {
         return Container(
           height: MediaQuery.of(context).size.height,
           decoration: BoxDecoration(
-            color: Colors.blue.shade900.withOpacity(0.5),
+            color: Colors.white,
             borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(20),
               topRight: Radius.circular(20),
@@ -63,8 +200,8 @@ class Modals {
                     'Delete Item',
                     style: TextStyle(
                         fontWeight: FontWeight.w600,
-                        fontSize: 33,
-                        color: Colors.white),
+                        fontSize: 16,
+                        color: Colors.black),
                   ),
                 ],
               ),
@@ -265,7 +402,10 @@ class Modals {
             ),
           ),
           padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom, top: 15),
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+              top: 15,
+              left: 15,
+              right: 15),
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -311,6 +451,10 @@ class Modals {
                     ),
                     const EditAddress(),
                     const SizedBox(
+                      height: 10,
+                    ),
+                    const EditDeliveryAddress(),
+                    const SizedBox(
                       height: 20,
                     ),
                     context.watch<UiProvider>().loading
@@ -332,6 +476,8 @@ class Modals {
 
                               _provider.addAdress(
                                   _provider.pref!.getString(addressKey)!);
+                              _provider.addUserCordinates(
+                                  _provider.pref!.getString(cordinatesKey)!);
                               _provider.addPhone(
                                   _provider.pref!.getString(phoneKey)!);
 
@@ -412,7 +558,7 @@ class Modals {
         return Container(
           height: MediaQuery.of(context).size.height,
           decoration: BoxDecoration(
-            color: Colors.blue.shade900.withOpacity(0.5),
+            color: Colors.white,
             borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(20),
               topRight: Radius.circular(20),
@@ -440,8 +586,8 @@ class Modals {
                     'Process Order',
                     style: TextStyle(
                         fontWeight: FontWeight.w600,
-                        fontSize: 33,
-                        color: Colors.white),
+                        fontSize: 16,
+                        color: Colors.black),
                   ),
                 ],
               ),
@@ -964,6 +1110,108 @@ class Modals {
                 ),
               ],
             ),
+          ),
+        );
+      },
+    );
+  }
+
+  static void processSingleOrder(
+      BuildContext cont, String id, String userId, bool isAdmin) {
+    showModalBottomSheet(
+      backgroundColor: Colors.transparent,
+      context: cont,
+      builder: (BuildContext context) {
+        return Container(
+          height: MediaQuery.of(context).size.height,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+          ),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(
+                        Icons.clear,
+                        color: Colors.red,
+                      ))
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Text(
+                    'Process Order',
+                    style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                        color: Colors.black),
+                  ),
+                ],
+              ),
+              Expanded(
+
+                  // height: context.watch<SizeProvider>().screenHeight /  2.5,
+                  child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  context.watch<UiProvider>().loading
+                      ? const SizedBox.shrink()
+                      : Button(
+                          text: 'Cancel',
+                          color: Colors.red.shade900,
+                          width: Responsive.isMobile(context) ||
+                                  Responsive.isMobileLarge(context)
+                              ? 100
+                              : 200,
+                          onClick: () async {
+                            Navigator.pop(context);
+                          },
+                          height: 60,
+                          fontSize: 14,
+                        ),
+                  context.watch<UiProvider>().loading
+                      ? const SizedBox.shrink()
+                      : const SizedBox(
+                          width: 10,
+                        ),
+                  context.watch<UiProvider>().loading
+                      ? const CupertinoActivityIndicator(
+                          radius: 15,
+                          color: Colors.blue,
+                        )
+                      : Button(
+                          text: 'Process',
+                          color: Colors.blue.shade900,
+                          width: Responsive.isMobile(context) ||
+                                  Responsive.isMobileLarge(context)
+                              ? 120
+                              : 200,
+                          onClick: () async {
+                            bool returned = await Controls.processSingle(
+                                context, id, true, isAdmin, userId);
+
+                            if (returned) {
+                              {
+                                Navigator.pop(cont);
+                              }
+                            }
+                          },
+                          height: 60,
+                          fontSize: 14,
+                        ),
+                ],
+              ))
+            ],
           ),
         );
       },

@@ -25,15 +25,19 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State {
   String? userName = '';
-  bool? showMesssage = true;
+  bool? showMesssage = false;
   @override
   void initState() {
     super.initState();
-    showMessage();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      saveInfo(context);
+    });
+
+    //  showMessage();
   }
 
   showMessage() async {
-    await Future.delayed(Duration(seconds: 5)).whenComplete(() {
+    await Future.delayed(const Duration(seconds: 5)).whenComplete(() {
       setState(() {
         showMesssage = false;
       });
@@ -60,12 +64,30 @@ class _HomeState extends State {
     SharedPreferences pref = await SharedPreferences.getInstance();
     UserModel user = await DatabaseService.getUserWithId();
 
-    await pref.setStringList(notificationKey, ['Welcome to shop you']);
+    await pref.setStringList(notificationKey, ['Welcome to Quikli']);
 
     await pref.setString(userIdKey, user.id!);
     await pref.setString(nameKey, user.name!);
 
     await pref.setString(emailKey, user.email!);
+
+    if (user.userLocation != null) {
+      if (user.userLocation!.isNotEmpty) {
+        if (user.userLocation!.contains("|||")) {
+          String value = user.userLocation!.split("|||").last;
+          //  print(value);
+          //  print(user.userLocation!.split("|||").first);
+          await pref.setString(cordinatesKey, value.isEmpty ? "null" : value);
+          await Provider.of<UiProvider>(context, listen: false)
+              .addUserCordinates(pref.getString(cordinatesKey)!);
+        }
+      }
+    }
+    // await pref.setString(
+    // cordinatesKey,
+    // user.profileImageUrl == null || user.profileImageUrl!.isEmpty
+    //     ? "null"
+    //     : user.profileImageUrl!);
 
     await pref.setString(
         dpKey,
@@ -97,7 +119,7 @@ class _HomeState extends State {
     print('done getting some user info');
   }
 
-  int _currentIndex = 0;
+  // int _currentIndex = 0;
 
   final List _children = const [
     InicioPage(),
@@ -108,118 +130,75 @@ class _HomeState extends State {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xfff2f2f2),
-      body: Stack(
-        children: [
-          _children[_currentIndex],
-          showMesssage!
-              ? Align(
-                  alignment: Alignment.bottomCenter,
-                  child: FadeInUp(
-                    animate: true,
-                    duration: const Duration(milliseconds: 500),
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 40),
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.6,
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.elliptical(1000, 300),
-                            bottomRight: Radius.elliptical(1000, 300),
-                          ),
-                        ),
-                        height: 70,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: const [
-                            Padding(
-                              padding: EdgeInsets.all(10.0),
-                              child: Text(
-                                "Chat with us here !",
-                                style: TextStyle(
-                                    fontFamily: 'Raleway',
-                                    color: Colors.black,
-                                    fontSize: 15.0,
-                                    fontWeight: FontWeight.w700),
-                              ),
-                            ),
-                            Icon(Icons.arrow_downward_outlined)
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                )
-              : SizedBox.shrink()
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        onTap: onTabTapped,
-        currentIndex: _currentIndex,
-        selectedItemColor: Color.fromRGBO(89, 86, 233, 1),
-        iconSize: 30,
-        elevation: 0.9,
-        backgroundColor: const Color(0xfff2f2f2),
-        items: [
-          const BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined, color: Color(0xff200E32)),
-              label: 'Home',
-              activeIcon: Icon(
-                Icons.home,
-                color: Color(0xff5956E9),
-              )),
-          const BottomNavigationBarItem(
-              icon: Icon(Icons.pedal_bike_outlined, color: Color(0xff200E32)),
-              backgroundColor: Color(0xfff2f2f2),
-              label: 'Deals',
-              activeIcon: Icon(
-                Icons.favorite,
-                color: Color(0xff5956E9),
-              )),
-          const BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline, color: Color(0xff200E32)),
-              backgroundColor: Color(0xfff2f2f2),
-              label: 'Profile',
-              activeIcon: Icon(
-                Icons.person,
-                color: Color(0xff5956E9),
-              )),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_cart_outlined,
-                  color: context.watch<UiProvider>().cartList.isNotEmpty
-                      ? Colors.red
-                      : Color(0xff200E32)),
-              backgroundColor: const Color(0xff5956E9),
-              label:
-                  'Cart ${context.watch<UiProvider>().cartList.length.toString()}',
-              activeIcon: Icon(
-                Icons.shopping_cart,
-                color: context.watch<UiProvider>().cartList.isNotEmpty
-                    ? Colors.red
-                    : Color(0xff5956E9),
-              )),
-        ],
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.transparent,
-        isExtended: true,
-        onPressed: () async {
-          await Utility.launchInWebViewOrVC(Uri.parse(
-              "https://wa.me/+2348070578450/?text=Hello there. i want to make some enquiry from FinddAny"));
-        },
-        child: Image.asset(
-          'assets/images/su3.png',
-          height: 50,
-          width: 50,
-          fit: BoxFit.contain,
-          //color: Colors.white,
-        ),
+    return const SafeArea(
+      child: Scaffold(
+        backgroundColor: Color(0xfff2f2f2),
+        body: InicioPage(),
+        // bottomNavigationBar: BottomNavigationBar(
+        //   type: BottomNavigationBarType.fixed,
+        //   onTap: onTabTapped,
+        //   currentIndex: _currentIndex,
+        //   selectedItemColor: Color.fromRGBO(89, 86, 233, 1),
+        //   iconSize: 30,
+        //   elevation: 0.9,
+        //   backgroundColor: const Color(0xfff2f2f2),
+        //   items: [
+        //     const BottomNavigationBarItem(
+        //         icon: Icon(Icons.home_outlined, color: Color(0xff200E32)),
+        //         label: 'Home',
+        //         activeIcon: Icon(
+        //           Icons.home,
+        //           color: Color(0xff5956E9),
+        //         )),
+        //     const BottomNavigationBarItem(
+        //         icon: Icon(Icons.pedal_bike_outlined, color: Color(0xff200E32)),
+        //         backgroundColor: Color(0xfff2f2f2),
+        //         label: 'Deals',
+        //         activeIcon: Icon(
+        //           Icons.favorite,
+        //           color: Color(0xff5956E9),
+        //         )),
+        //     const BottomNavigationBarItem(
+        //         icon: Icon(Icons.person_outline, color: Color(0xff200E32)),
+        //         backgroundColor: Color(0xfff2f2f2),
+        //         label: 'Profile',
+        //         activeIcon: Icon(
+        //           Icons.person,
+        //           color: Color(0xff5956E9),
+        //         )),
+        //     BottomNavigationBarItem(
+        //         icon: Icon(Icons.shopping_cart_outlined,
+        //             color: context.watch<UiProvider>().cartList.isNotEmpty
+        //                 ? Colors.red
+        //                 : Color(0xff200E32)),
+        //         backgroundColor: const Color(0xff5956E9),
+        //         label:
+        //             'Cart ${context.watch<UiProvider>().cartList.length.toString()}',
+        //         activeIcon: Icon(
+        //           Icons.shopping_cart,
+        //           color: context.watch<UiProvider>().cartList.isNotEmpty
+        //               ? Colors.red
+        //               : Color(0xff5956E9),
+        //         )),
+        //   ],
+        // ),
+
+        //floatingActionButtonLocation: FloatingActionButtonLocation.,
+        // floatingActionButton: FloatingActionButton(
+        //   backgroundColor: Colors.transparent,
+        //   isExtended: true,
+        //   onPressed: () async {
+        //     await Utility.launchInWebViewOrVC(Uri.parse(
+        //         "https://wa.me/+2348070578450/?text=Hello there. i want to make some enquiry from VigorTech"));
+        //   },
+        //   child: Image.asset(
+        //     'assets/images/su3.png',
+        //     height: 50,
+        //     width: 50,
+        //     fit: BoxFit.contain,
+        //     //color: Colors.white,
+        //   ),
+        // ),
       ),
     );
   }
@@ -228,10 +207,10 @@ class _HomeState extends State {
     Widget page = Home();
     switch (index) {
       case 1:
-        page = DoneDeals();
+        page = const DoneDeals();
         break;
       case 2:
-        page = Profile();
+        page = const Profile();
         break;
       case 3:
         page = Cart();

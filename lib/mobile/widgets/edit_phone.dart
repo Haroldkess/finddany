@@ -5,8 +5,25 @@ import 'package:provider/provider.dart';
 import 'package:shoppingyou/service/constant.dart';
 import 'package:shoppingyou/service/state/ui_manager.dart';
 
-class EditPhone extends StatelessWidget {
+class EditPhone extends StatefulWidget {
   const EditPhone({Key? key}) : super(key: key);
+
+  @override
+  State<EditPhone> createState() => _EditPhoneState();
+}
+
+class _EditPhoneState extends State<EditPhone> {
+  TextEditingController? controller;
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      UiProvider provider = Provider.of<UiProvider>(context, listen: false);
+      setState(() {
+        controller = TextEditingController(text: provider.phoneNumber);
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,11 +48,11 @@ class EditPhone extends StatelessWidget {
             ],
           ),
           TextField(
+            controller: controller,
             keyboardType: TextInputType.phone,
             onChanged: (value) async {
               await _provider.initializePref();
               _provider.pref!.setString(phoneKey, value);
-       
             },
             decoration: const InputDecoration(
               enabledBorder: UnderlineInputBorder(

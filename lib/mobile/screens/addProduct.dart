@@ -242,7 +242,7 @@ class _AddProductState extends State<AddProduct> {
                                           children: listColors
                                               .map((e) => Padding(
                                                     padding: const EdgeInsets
-                                                            .symmetric(
+                                                        .symmetric(
                                                         horizontal: 10),
                                                     child: InkWell(
                                                         onTap: () {
@@ -394,8 +394,10 @@ class _AddProductState extends State<AddProduct> {
                                         oldPrice.text,
                                         int.tryParse(stock.text)!);
                                     if (check == false) {
-                                       // ignore: use_build_context_synchronously
-                                       showToast2(context,  'Please fill in the form properly. ', isError: true);
+                                      // ignore: use_build_context_synchronously
+                                      showToast2(context,
+                                          'Please fill in the form properly. ',
+                                          isError: true);
                                       log('incorrect Form');
                                       return;
                                     }
@@ -431,8 +433,8 @@ class _AddProductState extends State<AddProduct> {
                                       stock.clear();
                                       listColors.clear();
                                       pickedSize.clear();
-                                        shopName.clear();
-                                        shopPhone.clear();
+                                      shopName.clear();
+                                      shopPhone.clear();
                                       // showToast('This Form will  reset!',
                                       //     successBlue);
 
@@ -442,9 +444,9 @@ class _AddProductState extends State<AddProduct> {
                                     } else {}
                                   },
                                   style: ElevatedButton.styleFrom(
-                                      primary: Color(0xFF5956E9),
+                                      backgroundColor: Color(0xFF5956E9),
                                       //  fixedSize: const Size( 70.0),
-                                      onPrimary: Colors.white,
+                                      foregroundColor: Colors.white,
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(10.0)),

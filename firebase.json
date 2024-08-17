@@ -1,16 +1,1 @@
-{
-  "hosting": {
-    "public": "build/web",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ]
-  }
-}
+{"hosting":{"public":"build/web","ignore":["firebase.json","**/.*","**/node_modules/**"],"rewrites":[{"source":"**","destination":"/index.html"}]},"flutter":{"platforms":{"android":{"default":{"projectId":"shopingyou-64e8e","appId":"1:693568913009:android:4513911866b1f2140e25d0","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"shopingyou-64e8e","configurations":{"android":"1:693568913009:android:4513911866b1f2140e25d0","ios":"1:693568913009:ios:4f71ce0cf8ef2b8c0e25d0","web":"1:693568913009:web:3db7b370bd7afeca0e25d0"}}}}}}

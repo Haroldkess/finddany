@@ -5,8 +5,25 @@ import 'package:provider/provider.dart';
 import 'package:shoppingyou/service/constant.dart';
 import 'package:shoppingyou/service/state/ui_manager.dart';
 
-class EditName extends StatelessWidget {
+class EditName extends StatefulWidget {
   const EditName({Key? key}) : super(key: key);
+
+  @override
+  State<EditName> createState() => _EditNameState();
+}
+
+class _EditNameState extends State<EditName> {
+  TextEditingController? controller;
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      UiProvider provider = Provider.of<UiProvider>(context, listen: false);
+      setState(() {
+        controller = TextEditingController(text: provider.name);
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,11 +48,10 @@ class EditName extends StatelessWidget {
             ],
           ),
           TextField(
-         
+            controller: controller,
             onChanged: (value) async {
               await _provider.initializePref();
               _provider.pref!.setString(nameKey, value);
-       
             },
             decoration: const InputDecoration(
               enabledBorder: UnderlineInputBorder(

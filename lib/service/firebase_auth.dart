@@ -22,12 +22,13 @@ class AuthService {
       print('try');
       UserCredential authResult = await _auth
           .createUserWithEmailAndPassword(
-            email: _provider.getPref.getString(emailKey)!,
-            password: _provider.getPref.getString(passwordKey)!,
+            email: _provider.email,
+            password: _provider.password,
           )
           .whenComplete(() => print('done'))
           .catchError((e) {
         showToast2(context, e.toString(), isError: true);
+        print(e);
         finished = false;
       });
       User signedInUser = authResult.user!;
@@ -36,8 +37,8 @@ class AuthService {
           transaction
               .set(_firestore.collection('/users').doc(signedInUser.uid), {
             'id': signedInUser.uid,
-            'name': _provider.getPref.getString(nameKey)!,
-            'email': _provider.getPref.getString(emailKey)!,
+            'name': _provider.name,
+            'email': _provider.email,
             'shopName': '',
             'phoneNumber': '',
             'userLocation': '',
@@ -55,12 +56,14 @@ class AuthService {
           finished = true;
         }).catchError((e) {
           showToast(e, errorRed);
+          print(e);
           finished = false;
         });
       } else {
         finished = false;
       }
     } catch (e) {
+      print(e);
       finished = false;
     }
 
@@ -100,8 +103,8 @@ class AuthService {
     try {
       UserCredential authResult = await _auth
           .signInWithEmailAndPassword(
-        email: _provider.getPref.getString(emailKey)!,
-        password: _provider.getPref.getString(passwordKey)!,
+        email: _provider.email,
+        password: _provider.password,
       )
           .whenComplete(() {
         log('finished');

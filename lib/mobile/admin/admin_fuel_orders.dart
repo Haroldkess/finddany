@@ -7,7 +7,6 @@ import '../screens/purchase_screens/cart.dart';
 import '../widgets/empty_state.dart';
 import '../widgets/fuel_widget.dart';
 
-
 class AdminFuelOrders extends StatefulWidget {
   const AdminFuelOrders({Key? key}) : super(key: key);
 
@@ -16,7 +15,6 @@ class AdminFuelOrders extends StatefulWidget {
 }
 
 class _AdminFuelOrdersState extends State<AdminFuelOrders> {
-
   @override
   void initState() {
     super.initState();
@@ -24,7 +22,9 @@ class _AdminFuelOrdersState extends State<AdminFuelOrders> {
   }
 
   Future getCart(BuildContext context) async {
-    if (Provider.of<UiProvider>(context, listen: false).adminFuelOrders.isNotEmpty) {
+    if (Provider.of<UiProvider>(context, listen: false)
+        .adminFuelOrders
+        .isNotEmpty) {
       return;
     }
     await Controls.adminFuelHistoryController(context);
@@ -41,7 +41,7 @@ class _AdminFuelOrdersState extends State<AdminFuelOrders> {
           onPressed: () {
             Navigator.pop(context);
           },
-          icon: const  Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
         ),
         title: const Text(
           "Fuel Orders",
@@ -51,6 +51,14 @@ class _AdminFuelOrdersState extends State<AdminFuelOrders> {
             fontWeight: FontWeight.bold,
           ),
         ),
+        actions: [
+          IconButton(
+              onPressed: () => Controls.fuelHistoryController(context),
+              icon: Icon(
+                Icons.refresh_outlined,
+                color: Colors.grey,
+              ))
+        ],
       ),
       body: RefreshIndicator(
         onRefresh: () => Controls.adminFuelHistoryController(context),
@@ -83,37 +91,37 @@ class _AdminFuelOrdersState extends State<AdminFuelOrders> {
                   SizedBox(height: 30),
                   FuelAlert(),
                   Expanded(
-                    child: context.watch<UiProvider>().adminFuelOrders.isNotEmpty
-                        ? ListView(
-                            children: context
-                                .watch<UiProvider>()
-                                .adminFuelOrders
-                                .map(
-                                  (e) => FuelDeals(
-                                    assetPath: 'assets/images/tablet.png',
-                                    title: '2020 Apple iPad Air 10.9"',
-                                    price: 579,
-                                    product: e,
-                                  ),
-                                )
-                                .toList())
-                        : EmptyState(
-                            path: 'assets/images/no_history.png',
-                            title: 'No history yet',
-                            description:
-                                '',
-                            textButton: 'Start ordering',
-                            onClick: () {
-                              Navigator.pop(context);
-                            },
-                          ),
+                    child:
+                        context.watch<UiProvider>().adminFuelOrders.isNotEmpty
+                            ? ListView(
+                                children: context
+                                    .watch<UiProvider>()
+                                    .adminFuelOrders
+                                    .map(
+                                      (e) => FuelDeals(
+                                        assetPath: 'assets/images/tablet.png',
+                                        title: '2020 Apple iPad Air 10.9"',
+                                        price: 579,
+                                        product: e,
+                                        isAdmin: true,
+                                      ),
+                                    )
+                                    .toList())
+                            : EmptyState(
+                                path: 'assets/images/no_history.png',
+                                title: 'No history yet',
+                                description: '',
+                                textButton: 'Start ordering',
+                                onClick: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
                   ),
                   const SizedBox(height: 20),
                   const SizedBox(height: 20)
                 ],
               ),
             ),
-     
           ],
         ),
       ),

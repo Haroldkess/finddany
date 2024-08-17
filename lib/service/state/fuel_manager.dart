@@ -1,17 +1,17 @@
 import 'package:flutter/cupertino.dart';
 
 class FuelManager extends ChangeNotifier {
-  double _sellingPrice = 0.0;
-  int _maxLitres = 0;
-  int _minLitres = 0;
-  int _availablelitres = 0;
-  int _fare = 0;
+  var _sellingPrice = 0;
+  var _maxLitres = 0;
+  var _minLitres = 0;
+  var _availablelitres = 0;
+  var _fare = 0;
   bool _loadStatus = false;
 
-  double selectedLires = 5.0;
+  double selectedLires = 1.0;
   String liveIn = "";
 
-  double get sellingPrice => _sellingPrice;
+  int get sellingPrice => _sellingPrice;
   int get maxLitres => _maxLitres;
   int get minLitres => _minLitres;
   int get availableLitres => _availablelitres;
@@ -34,7 +34,7 @@ class FuelManager extends ChangeNotifier {
   }
 
   Future<void> addLitreValues(
-      double price, int max, int min, int available, int transport) async {
+      var price, int max, int min, int available, int transport) async {
     _sellingPrice = price;
     _maxLitres = max;
     _minLitres = min;

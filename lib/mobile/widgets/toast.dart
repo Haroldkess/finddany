@@ -1,24 +1,25 @@
+import 'package:fl_toast/fl_toast.dart' hide Toast;
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:flutter_styled_toast/flutter_styled_toast.dart';
+//import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 
-
-Future <void> showToast(String message, String color) async {
+Future<void> showToast(String message, String color) async {
   Fluttertoast.showToast(
     msg: message,
     toastLength: Toast.LENGTH_LONG,
     gravity: ToastGravity.TOP,
     webBgColor: color,
     timeInSecForIosWeb: 4,
-
     textColor: Colors.white,
     fontSize: 16.0,
   );
 }
 
 showToast2(BuildContext? context, String message, {bool isError = false}) {
-  showToastWidget(
-      SizedBox(
+  showStyledToast(
+      alignment: Alignment.topCenter,
+      backgroundColor: isError ? Colors.white : Colors.blue[900],
+      child: SizedBox(
         width: MediaQuery.of(context!).size.width * 0.9,
         child: Material(
           color: isError ? Colors.white : Colors.blue[900],
@@ -38,7 +39,7 @@ showToast2(BuildContext? context, String message, {bool isError = false}) {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: isError
-                      ? const  Icon(
+                      ? const Icon(
                           Icons.error,
                           color: Colors.red,
                           size: 42,
@@ -49,15 +50,18 @@ showToast2(BuildContext? context, String message, {bool isError = false}) {
                           decoration: BoxDecoration(
                               shape: BoxShape.circle, color: Colors.white),
                           child: Center(
-                              child: Icon(Icons.notifications_none_outlined , color:   Colors.blue[900],
+                              child: Icon(
+                            Icons.notifications_none_outlined,
+                            color: Colors.blue[900],
                           )),
                         ),
                 ),
                 Expanded(
                   child: Text(
-                  message,
-                  style: TextStyle(  color: isError ? Colors.red : Colors.white,
-                  fontSize:  12),
+                    message,
+                    style: TextStyle(
+                        color: isError ? Colors.red : Colors.white,
+                        fontSize: 12),
                   ),
                 ),
               ],
@@ -65,10 +69,10 @@ showToast2(BuildContext? context, String message, {bool isError = false}) {
           ),
         ),
       ),
-      animation: StyledToastAnimation.slideFromTop,
+      // animation: StyledToastAnimation.slideFromTop,
       duration: const Duration(seconds: 4),
-      position:
-          const StyledToastPosition(align: Alignment.topCenter, offset: 40.0),
-      reverseCurve: Curves.easeInCubic,
+      //   position://
+      //     const StyledToastPosition(align: Alignment.topCenter, offset: 40.0),
+      // reverseCurve: Curves.easeInCubic,
       context: context);
 }

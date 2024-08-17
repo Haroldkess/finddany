@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shoppingyou/mobile/admin/adminextra/admin_extra.dart';
 import 'package:shoppingyou/mobile/admin/adminextra/order_users.dart';
 import '../../responsive/responsive_config.dart';
 import '../../service/controller.dart';
@@ -51,20 +52,20 @@ class _AdminOrderPageState extends State<AdminOrderPage> {
         onRefresh: () => Controls.doneDealsController(context),
         child: Stack(
           children: [
-            Padding(
-                padding: const EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 20.0),
-                child: ShaderMask(
-                    shaderCallback: (rect) {
-                      return const LinearGradient(
-                        begin: Alignment.center,
-                        end: FractionalOffset.bottomCenter,
-                        colors: [Colors.black, Colors.transparent],
-                      ).createShader(rect);
-                    },
-                    blendMode: BlendMode.dstIn,
-                    child: const Image(
-                        image: AssetImage('assets/images/splash.png'),
-                        fit: BoxFit.contain))),
+            // Padding(
+            //     padding: const EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 20.0),
+            //     child: ShaderMask(
+            //         shaderCallback: (rect) {
+            //           return const LinearGradient(
+            //             begin: Alignment.center,
+            //             end: FractionalOffset.bottomCenter,
+            //             colors: [Colors.black, Colors.transparent],
+            //           ).createShader(rect);
+            //         },
+            //         blendMode: BlendMode.dstIn,
+            //         child: const Image(
+            //             image: AssetImage('assets/images/splash.png'),
+            //             fit: BoxFit.contain))),
             Container(
               padding: EdgeInsets.symmetric(
                   horizontal: Responsive.isDesktop(context)
@@ -76,17 +77,20 @@ class _AdminOrderPageState extends State<AdminOrderPage> {
                   SizedBox(height: 30),
                   InfoAlert(),
                   Expanded(
-                    child: context.watch<UiProvider>().adminOrderUsers.isNotEmpty
+                    child: context.watch<UiProvider>().adminDeals.isNotEmpty
                         ? ListView(
                             children: context
                                 .watch<UiProvider>()
-                                .adminOrderUsers
+                                .adminDeals
                                 .map(
-                                  (e) => OrderedUsers(
+                                  (e) => AdminDealItem(
                                     assetPath: 'assets/images/tablet.png',
                                     title: '2020 Apple iPad Air 10.9"',
                                     price: 579,
-                                    data: e,
+                                    product: e,
+                                    id: e.userId!,
+                                    adminDeals:
+                                        context.watch<UiProvider>().adminDeals,
                                   ),
                                 )
                                 .toList())

@@ -23,9 +23,7 @@ class ShippingInfo extends StatelessWidget {
             right: Responsive.isMobile(context) ? 5 : 24,
             top: 15,
             bottom: 15),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
+        child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
           ShippingInfoItem(
             iconData: Icons.person_outline,
             text: context.watch<UiProvider>().name,
@@ -34,12 +32,21 @@ class ShippingInfo extends StatelessWidget {
               iconData: Icons.location_on_outlined,
               text: context.watch<UiProvider>().address == 'null'
                   ? '...'
-                  : context.watch<UiProvider>().address),
+                  : context.watch<UiProvider>().address.contains("|||")
+                      ? context.watch<UiProvider>().address.split("|||").first
+                      : context.watch<UiProvider>().address),
           ShippingInfoItem(
             iconData: Icons.phone_outlined,
             text: context.watch<UiProvider>().phoneNumber == 'null'
                 ? 'WhatsApp Number'
                 : context.watch<UiProvider>().phoneNumber,
+          ),
+          ShippingInfoItem(
+            iconData: Icons.pin_drop,
+            text: context.watch<UiProvider>().cordinates == 'null' ||
+                    context.watch<UiProvider>().cordinates.isEmpty
+                ? 'Exact Location'
+                : context.watch<UiProvider>().cordinates,
           ),
         ]),
       ),

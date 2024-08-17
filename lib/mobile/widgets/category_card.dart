@@ -51,12 +51,12 @@ class _StoriesState extends State<Stories> {
                     //   horizontal: 8.0,
                     // ),
                     scrollDirection: Axis.horizontal,
-                    itemCount: context.watch<UiProvider>().quickPicks.length,
+                    itemCount: context.watch<UiProvider>().prod.length,
                     physics: const AlwaysScrollableScrollPhysics(),
                     itemBuilder: (BuildContext context, int index) {
                       final ProductModel story =
                           Provider.of<UiProvider>(context, listen: false)
-                              .quickPicks[index];
+                              .prod[index];
                       return Padding(
                         padding: EdgeInsets.only(right: onlyAllPadding),
                         child: _StoryCard(story: story),

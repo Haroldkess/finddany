@@ -5,6 +5,7 @@ import 'package:shoppingyou/mobile/widgets/delete_modal.dart';
 import 'package:shoppingyou/models/order_model.dart';
 import 'package:shoppingyou/models/prod_model.dart';
 import 'package:shoppingyou/service/constant.dart';
+import 'package:shoppingyou/service/operations.dart';
 
 import '../../designParams/params.dart';
 
@@ -29,7 +30,7 @@ class DealItem extends StatelessWidget {
       minimumSize: const Size(22, 22),
       maximumSize: const Size(22, 22),
       elevation: 0,
-      primary: Color(0xFF7DCCEC),
+      //    primary: Color(0xFF7DCCEC),
     );
 
     return Container(
@@ -46,22 +47,29 @@ class DealItem extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Image(
-                        image: CachedNetworkImageProvider(
-                            product.images!.first.toString()),
-                        width: 80,
-                        height: 105,
-                        fit: BoxFit.cover,
+                      Column(
+                        children: [
+                          Image(
+                            image: CachedNetworkImageProvider(
+                                product.images!.first.toString()),
+                            width: 80,
+                            height: 105,
+                            fit: BoxFit.cover,
+                          ),
+                        ],
                       ),
                       const SizedBox(width: 8),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            product.name!,
-                            style: TextStyle(
-                                fontWeight: FontWeight.w600, fontSize: 16),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width / 3,
+                            child: Text(
+                              product.name!,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w600, fontSize: 16),
+                            ),
                           ),
                           const SizedBox(height: 10),
                           Text(
@@ -83,82 +91,120 @@ class DealItem extends StatelessWidget {
                               ),
                             ],
                           ),
-                            const SizedBox(height: 10),
-                             SizedBox(
-                              width: MediaQuery.of(context).size.width / 2.5,
-                               child: Text(
-                                  product.address!,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 15,
-                                  ),
-                                ),
-                             ),
-                              const SizedBox(height: 5),
-                             SizedBox(
-                                  width: MediaQuery.of(context).size.width / 2.5,
-                               child: Text(
-                                  product.email!,
-                                   maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 15,
-                                  ),
-                                ),
-                             ),
-                              const SizedBox(height: 5),
-                               SizedBox(
-                                 width: MediaQuery.of(context).size.width / 2.5,
-                                 child: Text(
-                                  product.phone!,
-                                   maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 15,
-                                  ),
+                          const SizedBox(height: 10),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width / 3,
+                            child: Text(
+                              product.address!.split("|||").first,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 15,
                               ),
-                               ),
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                          InkWell(
+                            onTap: () async {
+                              final trackData =
+                                  product.address!.split("|||").last;
+                              final lat = trackData.split(":::").first;
+                              final long = trackData.split(":::").last;
 
+                              Operations.track(lat, long);
+                            },
+                            child: SizedBox(
+                              width: MediaQuery.of(context).size.width / 3,
+                              child: Text(
+                                "See Location",
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 15,
+                                    color: Colors.green),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width / 2.5,
+                            child: Text(
+                              Operations.convertDate(
+                                  product.timestamp!.toDate()),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 15,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width / 2.5,
+                            child: Text(
+                              product.email!,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 15,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width / 2.5,
+                            child: Text(
+                              product.phone!,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 15,
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ],
                   ),
-                  Column(
-                    children: [
-                      IconButton(
-                        icon: const Icon(
-                          Icons.contacts_outlined,
-                          size: 18,
-                          color: Color(0xFFFA4A0C),
-                        ),
-                        onPressed: () async {
-                          // Modals.deleteFromCart(context, product.id!);
-                          // do something
-                        },
-                      ),
-                      Row(
-                        children: [
-                          CircleAvatar(
-                            radius: 6,
-                            backgroundColor: product.recieved!
-                                ? kPrimaryColor
-                                : Colors.orange,
-                          ),
-                          const SizedBox(width: 5),
-                          Text(
-                            product.recieved! ? 'Recieved' : 'Processing',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 15,
+                  Expanded(
+                    child: Column(
+                      children: [
+                        // IconButton(
+                        //   icon: const Icon(
+                        //     Icons.contacts_outlined,
+                        //     size: 18,
+                        //     color: Color(0xFFFA4A0C),
+                        //   ),
+                        //   onPressed: () async {
+                        //     // Modals.deleteFromCart(context, product.id!);
+                        //     // do something
+                        //   },
+                        // ),
+                        Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 6,
+                              backgroundColor: product.recieved!
+                                  ? kPrimaryColor
+                                  : Colors.orange,
                             ),
-                          ),
-                        ],
-                      )
-                    ],
+                            const SizedBox(width: 5),
+                            Text(
+                              product.recieved! ? 'Recieved' : 'Processing',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 15,
+                              ),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
                   ),
                 ])),
       ),

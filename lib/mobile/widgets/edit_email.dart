@@ -5,8 +5,25 @@ import 'package:provider/provider.dart';
 import 'package:shoppingyou/service/constant.dart';
 import 'package:shoppingyou/service/state/ui_manager.dart';
 
-class EditEmail extends StatelessWidget {
+class EditEmail extends StatefulWidget {
   const EditEmail({Key? key}) : super(key: key);
+
+  @override
+  State<EditEmail> createState() => _EditEmailState();
+}
+
+class _EditEmailState extends State<EditEmail> {
+  TextEditingController? controller;
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      UiProvider provider = Provider.of<UiProvider>(context, listen: false);
+      setState(() {
+        controller = TextEditingController(text: provider.email);
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,10 +48,10 @@ class EditEmail extends StatelessWidget {
             ],
           ),
           TextField(
+            controller: controller,
             onChanged: (value) async {
               await _provider.initializePref();
               _provider.pref!.setString(emailKey, value);
-       
             },
             decoration: const InputDecoration(
               enabledBorder: UnderlineInputBorder(

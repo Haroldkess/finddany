@@ -1,14 +1,25 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'dart:isolate';
 import 'dart:typed_data';
-
+import 'package:flutter/foundation.dart';
+import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_paystack_client/flutter_paystack_client.dart';
+import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
+
+import 'package:flutter_paystack_max/flutter_paystack_max.dart';
+// import 'package:flutter_paystack_client/flutter_paystack_client.dart';
+import 'package:flutter_paystack_plus/flutter_paystack_plus.dart';
+// import 'package:pay_with_paystack/pay_with_paystack.dart';
 import 'package:provider/provider.dart';
+import 'package:shoppingyou/mobile/fuel/fuelcontrol/fuel_control.dart';
 import 'package:shoppingyou/mobile/widgets/toast.dart';
 import 'package:shoppingyou/models/prod_model.dart';
 import 'package:shoppingyou/service/constant.dart';
@@ -24,14 +35,10 @@ class Controls {
   static Future<bool> validateForm(context) async {
     late bool isValidated;
     UiProvider _provider = Provider.of<UiProvider>(context, listen: false);
-    await _provider.initializePref();
+    //await _provider.initializePref();
 
-    String _email = _provider.getPref.getString(emailKey) == null
-        ? ''
-        : _provider.getPref.getString(emailKey)!;
-    String _password = _provider.getPref.getString(passwordKey) == null
-        ? ''
-        : _provider.getPref.getString(passwordKey)!;
+    String _email = _provider.email;
+    String _password = _provider.password;
 
     if ((!_email.contains('@') || _email.length < 4 || _email.isEmpty) ||
         (_password.isEmpty || _password.length < 4 || _password.isEmpty)) {
@@ -46,18 +53,15 @@ class Controls {
   static Future<bool> validateForm2(context) async {
     late bool isValidated;
     UiProvider _provider = Provider.of<UiProvider>(context, listen: false);
-    await _provider.initializePref();
+    // await _provider.initializePref();
 
-    String _email = _provider.getPref.getString(emailKey) == null
-        ? ''
-        : _provider.getPref.getString(emailKey)!;
-    String _password = _provider.getPref.getString(passwordKey) == null
-        ? ''
-        : _provider.getPref.getString(passwordKey)!;
+    String _email = _provider.email;
+    String _password = _provider.password;
 
-    String _name = _provider.getPref.getString(nameKey) == null
-        ? ''
-        : _provider.getPref.getString(nameKey)!;
+    String _name = _provider.name;
+    print(_email);
+    print(_name);
+    print(_password);
 
     if ((!_email.contains('@') || _email.length < 4 || _email.isEmpty) ||
         (_password.isEmpty || _password.length < 4 || _password.isEmpty) ||
@@ -470,6 +474,37 @@ class Controls {
     return enableTracker;
   }
 
+  //process Single
+  static Future<bool> processSingle(
+      BuildContext context, String id, bool val, bool isAdmin,
+      [String? userId]) async {
+    UiProvider provider = Provider.of<UiProvider>(context, listen: false);
+
+    provider.load(true);
+
+    // ignore: use_build_context_synchronously
+    bool enableTracker =
+        await DatabaseService.processSingleOrder(id, val, isAdmin, userId);
+
+    if (enableTracker) {
+      provider.load(false);
+      if (isAdmin) {
+        await Controls.adminFuelHistoryController(context);
+      } else {
+        await Controls.fuelHistoryController(context);
+      }
+
+      showToast2(context, ' successfull!', isError: false);
+    } else {
+      provider.load(false);
+
+      showToast2(context, 'Something went wrong', isError: true);
+    }
+    provider.load(false);
+
+    return enableTracker;
+  }
+
   static Future<bool> checkEnable(
     BuildContext context,
     String id,
@@ -512,45 +547,152 @@ class Utility {
   static Future<void> pickProductImages(BuildContext context) async {
     UiProvider provider = Provider.of<UiProvider>(context, listen: false);
     List<Uint8List> file = [];
-    FilePickerResult? mediaInfo = await FilePicker.platform
-        .pickFiles(type: FileType.image, allowMultiple: true);
 
-    if (mediaInfo == null) return;
-    mediaInfo.files.forEach((element) async {
-      if (file.length < 3) {
-        file.add(element.bytes!);
+    if (!kIsWeb) {
+      var status = await Permission.storage.status;
+      debugPrint("storage permission " + status.toString());
+      if (await Permission.storage.isDenied) {
+        debugPrint("sorage permission ===" + status.toString());
+
+        await Permission.storage.request();
       } else {
-        return;
+        debugPrint("permission storage " + status.toString());
+        // do something with storage like file picker
       }
-    });
-    provider.addPickedProductPictures(file);
+    }
+    try {
+      FilePickerResult? mediaInfo = await FilePicker.platform
+          .pickFiles(type: FileType.image, allowMultiple: true);
+
+      if (mediaInfo == null) return;
+      mediaInfo.files.forEach((element) async {
+        if (file.length < 3) {
+          if (kIsWeb) {
+            file.add(element.bytes!);
+          } else {
+            Uint8List temp = await convertFileToUint8List(File(element.path!));
+
+            file.add(temp);
+          }
+        } else {
+          return;
+        }
+      });
+      provider.addPickedProductPictures(file);
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  static Future<Uint8List> convertFileToUint8List(File file) async {
+    Uint8List bytes = await file.readAsBytes();
+    return bytes;
   }
 
   static Future<void> pickProfileImage(BuildContext context) async {
     UiProvider provider = Provider.of<UiProvider>(context, listen: false);
     Uint8List file;
-    FilePickerResult? mediaInfo = await FilePicker.platform
-        .pickFiles(type: FileType.image, allowMultiple: false);
+    File fileMobile;
+    if (!kIsWeb) {
+      var status = await Permission.storage.status;
+      debugPrint("storage permission " + status.toString());
+      if (await Permission.storage.isDenied) {
+        debugPrint("sorage permission ===" + status.toString());
 
-    if (mediaInfo == null) return;
-    file = mediaInfo.files.single.bytes!;
-    provider.addProfilePicture(file);
-    provider.load(true);
-    String getUrl = await DatabaseService.uploadPost(file);
-    if (getUrl != null || getUrl.isNotEmpty) {
-      // ignore: use_build_context_synchronously
-      print(getUrl);
-      bool isDone = await DatabaseService.updateProfileImage(context, getUrl);
-      if (isDone) {
-        showToast2(context, 'You changed your profile image successfully ');
-        provider.load(false);
+        await Permission.storage.request();
       } else {
-        showToast2(context,
-            'We could not update your profile image at the moment please try again later.',
-            isError: true);
+        debugPrint("permission storage " + status.toString());
+        // do something with storage like file picker
+      }
+    }
+    try {
+      FilePickerResult? mediaInfo = await FilePicker.platform
+          .pickFiles(type: FileType.image, allowMultiple: false);
+
+      if (mediaInfo == null) return;
+      if (kIsWeb) {
+        file = mediaInfo.files.single.bytes!;
+        provider.addProfilePicture(file);
+      } else {
+        file = await convertFileToUint8List(File(mediaInfo.files.single.path!));
+        provider.addProfilePicture(file);
+      }
+
+      provider.load(true);
+      String getUrl = await DatabaseService.uploadPost(file);
+      if (getUrl != null || getUrl.isNotEmpty) {
+        // ignore: use_build_context_synchronously
+        print(getUrl);
+        bool isDone = await DatabaseService.updateProfileImage(context, getUrl);
+        if (isDone) {
+          showToast2(context, 'You changed your profile image successfully ');
+          provider.load(false);
+        } else {
+          showToast2(context,
+              'We could not update your profile image at the moment please try again later.',
+              isError: true);
+          provider.load(false);
+        }
         provider.load(false);
       }
+    } catch (e) {
+      print(e);
+    }
+    // provider.load(false);
+  }
+
+  static run(BuildContext context) async {
+    UiProvider provider = Provider.of<UiProvider>(context, listen: false);
+    showToast('Processing... ', successBlue);
+    final sendOrder = await DatabaseService.makeOrder(context);
+    if (sendOrder) {
       provider.load(false);
+      showToast('Order Completed succesffully ', successBlue);
+      // provider.load(false);
+      //  showToast('Order Completed succesffully ', successBlue);
+      // });
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        'homeScreen',
+        (Route<dynamic> route) => false,
+      );
+
+      // Navigator.pop(context);
+      // Navigator.pop(context);
+      // Navigator.pop(context);
+      // Navigator.pop(context);
+
+      // showToast(
+      //     'Charge was successful. Ref: ${res.reference}', successBlue);
+    } else {
+      // WidgetsBinding.instance.addPostFrameCallback((_) {
+      //   showToast('waiting for network do not Exit page  ', errorRed);
+      // });
+
+      final sendOrder = await DatabaseService.makeOrder(context);
+      if (sendOrder) {
+        provider.load(false);
+        //  WidgetsBinding.instance.addPostFrameCallback((_) {
+        showToast('Order Completed succesffully ', successBlue);
+        // });
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          'homeScreen',
+          (Route<dynamic> route) => false,
+        );
+
+        // Navigator.pop(context);
+        // Navigator.pop(context);
+        // Navigator.pop(context);
+        // Navigator.pop(context);
+        // showToast(
+        //     'Charge was successful. Ref: ${res.reference}', successBlue);
+      } else {
+        provider.load(false);
+        // WidgetsBinding.instance.addPostFrameCallback((_) {
+        showToast('waiting for network do not Exit page  ', errorRed);
+        //  });
+      }
     }
     provider.load(false);
   }
@@ -562,63 +704,195 @@ class Utility {
     provider.load(true);
     int added = 100;
     int resolvedPrice = (provider.totalPrice + addedAmount) * added;
-
+    String key = await getKey();
+    String secret = await getSecret();
+    final references = await FuelControl.getReference();
     try {
-      final charge = Charge()
-        ..email = provider.pref!.getString(emailKey)
-        ..amount = resolvedPrice
-        ..reference = 'ref_${DateTime.now().millisecondsSinceEpoch}';
-      // ignore: use_build_context_synchronously
-      final res = await PaystackClient.checkout(context, charge: charge);
-
-      if (res.status) {
-        // ignore: use_build_context_synchronously
-        bool sendOrder = await DatabaseService.makeOrder(context);
-        if (sendOrder) {
-          provider.load(false);
-          Navigator.pop(context);
-          // showToast(
-          //     'Charge was successful. Ref: ${res.reference}', successBlue);
-
-          showToast2(context, 'Order Completed succseffully ', isError: false);
-        } else {
-          showToast2(context, 'waiting for network do not Exit page  ',
-              isError: false);
-
-          bool sendOrder = await DatabaseService.makeOrder(context);
-          if (sendOrder) {
-            provider.load(false);
-
-            Navigator.pop(context);
-            // showToast(
-            //     'Charge was successful. Ref: ${res.reference}', successBlue);
-            showToast2(context, 'Order Completed succseffully ',
-                isError: false);
-          }
-        }
-      } else {
-        provider.load(false);
-        Navigator.pop(context);
-        showToast2(context, 'Failed: ${res.message}', isError: true);
-      }
+      await FlutterPaystackPlus.openPaystackPopup(
+          publicKey: key,
+          context: context,
+          secretKey: secret,
+          currency: 'NGN',
+          customerEmail: provider.pref!.getString(emailKey)!,
+          amount: resolvedPrice.toString(),
+          reference: references,
+          callBackUrl: "[GET IT FROM YOUR PAYSTACK DASHBOARD]",
+          onClosed: () {
+            print("closed");
+            verifyOnServer(references, context, secret);
+          },
+          onSuccess: () {
+            // print("successfull");
+            verifyOnServer(references, context, secret);
+          });
     } catch (error) {
-      provider.load(false);
-      Navigator.pop(context);
+      // provider.load(false);
+      //  Navigator.pop(context);
       print('Payment Error ==> $error');
     }
-    provider.load(false);
-    Navigator.pop(context);
+    // provider.load(false);
+    //  Navigator.pop(context);
     // provider.load(false);
   }
 
-    static Future<void> launchInWebViewOrVC(Uri url) async {
+  static verifyOnServer(String reference, context, String sk) async {
+    try {
+      showToast('Verifying ', successBlue);
+      Map<String, String> headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $sk'
+      };
+
+      log("calling");
+      http.Response response = await http
+          .get(
+              Uri.parse(
+                  'https://api.paystack.co/transaction/verify/$reference'),
+              headers: headers)
+          .timeout(const Duration(seconds: 30));
+      final Map body = json.decode(response.body);
+      log(response.body);
+      if (body['data']['status'] == 'success') {
+        run(
+          context,
+        );
+      } else {
+        log("unpaid");
+        errorShow(context);
+      }
+
+      //do something with the response. show success}
+      //show error prompt}
+    } catch (e) {
+      errorShow(context);
+      print(e);
+      //return;
+    }
+  }
+
+  static Future<void> makePaymentMobile(
+      BuildContext context, int addedAmount) async {
+    UiProvider provider = Provider.of<UiProvider>(context, listen: false);
+
+    await provider.initializePref();
+    provider.load(true);
+    int added = 100;
+    int resolvedPrice = (provider.totalPrice + addedAmount) * added;
+    String key = await getKey();
+    String secret = await getSecret();
+    Map meta = {
+      "name": provider.pref!.getString(nameKey) ?? "",
+      "phone": provider.pref!.getString(phoneKey) ?? ""
+    };
+
+    final request = PaystackTransactionRequest(
+      reference: 'ref_${DateTime.now().millisecondsSinceEpoch}',
+      secretKey: secret,
+      email: provider.pref!.getString(emailKey)!,
+      amount: double.tryParse(resolvedPrice.toString())!,
+      currency: PaystackCurrency.ngn,
+      //  metadata: meta,
+      channel: [
+        PaystackPaymentChannel.mobileMoney,
+        PaystackPaymentChannel.card,
+        PaystackPaymentChannel.ussd,
+        PaystackPaymentChannel.bankTransfer,
+        PaystackPaymentChannel.bank,
+        PaystackPaymentChannel.qr,
+        PaystackPaymentChannel.eft,
+      ],
+    );
+    try {
+      final initializedTransaction =
+          await PaymentService.initializeTransaction(request);
+
+      if (!initializedTransaction.status) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: Colors.red,
+          content: Text(initializedTransaction.message),
+        ));
+
+        return;
+      }
+
+      final PaystackTransactionVerified response =
+          await PaymentService.showPaymentModal(context,
+                  transaction: initializedTransaction,
+                  // Callback URL must match the one specified on your paystack dashboard,
+                  callbackUrl: '...')
+              .then((_) async {
+        return await PaymentService.verifyTransaction(
+          paystackSecretKey: secret,
+          initializedTransaction.data?.reference ?? request.reference,
+        );
+      });
+
+      if (response.data.status == PaystackTransactionStatus.success) {
+        run(context);
+      } else {
+        errorShow(context);
+      }
+    } catch (error) {
+      provider.load(false);
+      // Navigator.pop(context);
+      print('Payment Error ==> $error');
+    }
+    provider.load(false);
+    // Navigator.pop(context);
+    // provider.load(false);
+  }
+
+  static Future<void> launchInWebViewOrVC(
+    Uri url,
+  ) async {
     if (!await launchUrl(
       url,
-      mode: LaunchMode.platformDefault,
+      mode:
+          kIsWeb ? LaunchMode.platformDefault : LaunchMode.externalApplication,
       webViewConfiguration: const WebViewConfiguration(
           headers: <String, String>{'my_header_key': 'my_header_value'}),
     )) {
       throw Exception('Could not launch $url');
     }
+  }
+
+  static errorShow(context) {
+    UiProvider provider = Provider.of<UiProvider>(context, listen: false);
+    provider.load(false);
+    // ignore: use_build_context_synchronously
+    //   Navigator.pop(context);
+    // ignore: use_build_context_synchronously
+    showToast2(context, 'Failed: ', isError: true);
+  }
+
+  static Future getKey() async {
+    late String? key;
+    await FirebaseFirestore.instance
+        .collection("controls")
+        .doc('oneGod1997')
+        .get()
+        .then((value) {
+      key = value.data()!["key"];
+    });
+
+    return key ?? "";
+
+    //await PaystackClient.initialize(key);
+  }
+
+  static Future getSecret() async {
+    late String? key;
+    await FirebaseFirestore.instance
+        .collection("controls")
+        .doc('oneGod1997')
+        .get()
+        .then((value) {
+      key = value.data()!["secret"];
+    });
+
+    return key ?? "";
+
+    //await PaystackClient.initialize(key);
   }
 }

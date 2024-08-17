@@ -31,9 +31,10 @@ class CustomName extends StatelessWidget {
           ),
           TextField(
             onChanged: (value) async {
+              _provider.addUserName(value);
               await _provider.initializePref();
               _provider.pref!.setString('name', value);
-              log( _provider.pref!.getString('name').toString());
+              log(_provider.pref!.getString('name').toString());
             },
             decoration: const InputDecoration(
               enabledBorder: UnderlineInputBorder(

@@ -1,11 +1,11 @@
 {
-    "name": "Finddany",
-    "short_name": "Finddany",
+    "name": "Quickliy",
+    "short_name": "Quickliy",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "Get your day to day products here on Finddany. We deliver to your door step.",
+    "description": "Own a virtual oil business and earn passive income with your mobile phone, Buy fuel at best prices we deliver to your door step.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

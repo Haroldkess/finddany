@@ -13,7 +13,6 @@ class NotificationItem extends StatelessWidget {
 
   NotificationItem({
     Key? key,
-   
     this.price = 0,
     this.title = 'Title of the product',
     this.assetPath = '',
@@ -27,7 +26,7 @@ class NotificationItem extends StatelessWidget {
       minimumSize: const Size(22, 22),
       maximumSize: const Size(22, 22),
       elevation: 0,
-      primary: Color(0xFF7DCCEC),
+      //   primary: Color(0xFF7DCCEC),
     );
 
     return Container(
@@ -45,8 +44,7 @@ class NotificationItem extends StatelessWidget {
                   Row(
                     children: [
                       Image(
-                        image: AssetImage(
-                           assetPath),
+                        image: AssetImage(assetPath),
                         width: 80,
                         height: 105,
                         fit: BoxFit.cover,
@@ -56,28 +54,23 @@ class NotificationItem extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                              SizedBox(
-                                  width: MediaQuery.of(context).size.width / 2,
-                               child: Text(
-                                  title,
-                                   maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 15,
-                                    fontFamily: 'Raleway',
-                                  ),
-                                ),
-                             ),
-                           
-    
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width / 2,
+                            child: Text(
+                              title,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w400,
+                                fontSize: 15,
+                                fontFamily: 'Raleway',
+                              ),
+                            ),
+                          ),
                         ],
                       ),
-                  
-                  
                     ],
                   ),
-        
                 ])),
       ),
     );

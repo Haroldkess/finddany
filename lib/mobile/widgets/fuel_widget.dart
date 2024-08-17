@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +9,9 @@ import 'package:shoppingyou/mobile/widgets/delete_modal.dart';
 import 'package:shoppingyou/models/order_model.dart';
 import 'package:shoppingyou/models/prod_model.dart';
 import 'package:shoppingyou/service/constant.dart';
+import 'package:shoppingyou/service/controller.dart';
+import 'package:shoppingyou/service/operations.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../designParams/params.dart';
 import '../../service/state/ui_manager.dart';
@@ -16,12 +21,14 @@ class FuelDeals extends StatelessWidget {
   final String title;
   final String assetPath;
   final FuelModel product;
+  bool isAdmin;
   FuelDeals({
     Key? key,
     required this.product,
     this.price = 0,
     this.title = 'Title of the product',
     this.assetPath = '',
+    required this.isAdmin,
   }) : super(key: key);
 
   @override
@@ -33,10 +40,11 @@ class FuelDeals extends StatelessWidget {
       minimumSize: const Size(22, 22),
       maximumSize: const Size(22, 22),
       elevation: 0,
-      primary: Color(0xFF7DCCEC),
+      //    primary: Color(0xFF7DCCEC),
     );
 
     return Container(
+      width: MediaQuery.of(context).size.width,
       child: Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12.0),
@@ -45,163 +53,221 @@ class FuelDeals extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 15),
         child: Padding(
             padding: EdgeInsets.all(10),
-            child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-              Row(
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Image(
-                    image: AssetImage("assets/images/tank.png"),
-                    width: 80,
-                    height: 105,
-                    fit: BoxFit.cover,
-                  ),
-                  const SizedBox(width: 8),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  Row(
                     children: [
-                      Text(
-                        product.name!,
-                        style: TextStyle(
-                            fontWeight: FontWeight.w600, fontSize: 16),
+                      const Image(
+                        image: AssetImage("assets/images/tank.png"),
+                        width: 80,
+                        height: 105,
+                        fit: BoxFit.cover,
                       ),
-                      const SizedBox(height: 10),
-                      Text(
-                        '${currencySymbol()} ${numberFormat.format(int.tryParse(product.price!.toString()))}',
-                        style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 15,
-                            color: Color(0xFF5956E9)),
-                      ),
-                      Row(
-                        children: [
-                          const Text('Lires: '),
-                          Text(
-                            product.litres.toString(),
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 15,
+                      const SizedBox(width: 5),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width / 3,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width / 3,
+                              child: Text(
+                                product.name!,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w600, fontSize: 16),
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width / 2.5,
-                        child: Text(
-                          product.address!,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 15,
-                          ),
+                            const SizedBox(height: 10),
+                            Text(
+                              '${currencySymbol()}${Operations.convertToCurrency((product.price)! * (product.litres)!)} at ${currencySymbol()} ${numberFormat.format(int.tryParse(product.price!.toString()))} per Liter',
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 15,
+                                  color: Color(0xFF5956E9)),
+                            ),
+                            Row(
+                              children: [
+                                const Text('Lires: '),
+                                Text(
+                                  product.litres.toString(),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width / 3,
+                              child: Text(
+                                product.address!.split("|||").first,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 5),
+                            InkWell(
+                              onTap: () async {
+                                final trackData =
+                                    product.address!.split("|||").last;
+                                final lat = trackData.split(":::").first;
+                                final long = trackData.split(":::").last;
+                                if (isAdmin) {
+                                  Operations.track(lat, long);
+                                } else {
+                                  //  Operations.track(lat, long);
+                                }
+                              },
+                              child: SizedBox(
+                                width: MediaQuery.of(context).size.width / 3,
+                                child: Text(
+                                  isAdmin ? "Track user" : "See Location",
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 15,
+                                      color: Colors.green),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 5),
+                            isAdmin
+                                ? SizedBox(
+                                    width:
+                                        MediaQuery.of(context).size.width / 2.5,
+                                    child: Text(
+                                      product.email!,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 15,
+                                      ),
+                                    ),
+                                  )
+                                : SizedBox.shrink(),
+                            const SizedBox(height: 5),
+                            isAdmin
+                                ? SizedBox(
+                                    width:
+                                        MediaQuery.of(context).size.width / 2.5,
+                                    child: InkWell(
+                                      onTap: () {
+                                        Utility.launchInWebViewOrVC(Uri.parse(
+                                            "https://wa.me/${product.phone}/?text=Hello there. Your fuel is ready for pickup. Best regards from Quickly"));
+                                      },
+                                      child: Text(
+                                        product.phone!,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : SizedBox.shrink(),
+                            const SizedBox(height: 5),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width / 2.5,
+                              child: Text(
+                                Operations.convertDate(
+                                    product.timestamp!.toDate()),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 5),
+                            isAdmin
+                                ? SizedBox(
+                                    width:
+                                        MediaQuery.of(context).size.width / 2.5,
+                                    child: Text(
+                                      product.userId!,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 15,
+                                      ),
+                                    ),
+                                  )
+                                : SizedBox.shrink(),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 5),
-                      provide.hasShop
-                          ? SizedBox(
-                              width: MediaQuery.of(context).size.width / 2.5,
-                              child: Text(
-                                product.email!,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 15,
-                                ),
-                              ),
-                            )
-                          : SizedBox.shrink(),
-                      const SizedBox(height: 5),
-                      provide.hasShop
-                          ? SizedBox(
-                              width: MediaQuery.of(context).size.width / 2.5,
-                              child: Text(
-                                product.phone!,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 15,
-                                ),
-                              ),
-                            )
-                          : SizedBox.shrink(),
-                      const SizedBox(height: 5),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width / 2.5,
-                        child: Text(
-                          product.timestamp!.toDate().toString(),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 15,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 5),
-                      provide.hasShop
-                          ? SizedBox(
-                              width: MediaQuery.of(context).size.width / 2.5,
-                              child: Text(
-                                product.userId!,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 15,
-                                ),
-                              ),
-                            )
-                          : SizedBox.shrink(),
                     ],
                   ),
-                ],
-              ),
-              provide.hasShop
-                  ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+                  // provide.hasShop
+                  //     ?
 
-                      children: [
-                        // IconButton(
-                        //   icon: const Icon(
-                        //     Icons.contacts_outlined,
-                        //     size: 18,
-                        //     color: Color(0xFFFA4A0C),
-                        //   ),
-                        //   onPressed: () async {
-                        //     // Modals.deleteFromCart(context, product.id!);
-                        //     // do something
-                        //   },
-                        // ),
-                        InkWell(
-                          onTap: () {
-                            // Modals.deleteFromCart(context, product.id!);
-                          },
-                          child: Row(
-                            children: [
-                              CircleAvatar(
-                                radius: 6,
-                                backgroundColor: product.recieved!
-                                    ? kPrimaryColor
-                                    : Colors.orange,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      // IconButton(
+                      //   icon: const Icon(
+                      //     Icons.contacts_outlined,
+                      //     size: 18,
+                      //     color: Color(0xFFFA4A0C),
+                      //   ),
+                      //   onPressed: () async {
+                      //     // Modals.deleteFromCart(context, product.id!);
+                      //     // do something
+                      //   },
+                      // ),
+                      InkWell(
+                        onTap: () {
+                          UiProvider provide =
+                              Provider.of<UiProvider>(context, listen: false);
+
+                          if (product.recieved == true) {
+                            return;
+                          }
+                          //  log(product.id!);
+                          Modals.processSingleOrder(
+                            context,
+                            product.id!,
+                            product.userId!,
+                            isAdmin,
+                          );
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            CircleAvatar(
+                              radius: 6,
+                              backgroundColor: product.recieved!
+                                  ? kPrimaryColor
+                                  : Colors.orange,
+                            ),
+                            const SizedBox(width: 5),
+                            Text(
+                              product.recieved! ? 'Recieved' : 'Processing',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 15,
                               ),
-                              const SizedBox(width: 5),
-                              Text(
-                                product.recieved! ? 'Recieved' : 'Processing',
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 15,
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      ],
-                    )
-                  : SizedBox.shrink(),
-            ])),
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  )
+                  //: SizedBox.shrink(),
+                ])),
       ),
     );
   }

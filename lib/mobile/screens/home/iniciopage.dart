@@ -1,31 +1,25 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_paystack_client/flutter_paystack_client.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shoppingyou/mobile/fuel/fuel_card.dart';
-
-import 'package:shoppingyou/mobile/screens/home/searchscreen.dart';
-import 'package:shoppingyou/mobile/widgets/animated_header.dart';
-import 'package:shoppingyou/mobile/widgets/banner.dart';
-import 'package:shoppingyou/mobile/widgets/category_chips.dart';
-import 'package:shoppingyou/mobile/widgets/delete_modal.dart';
-import 'package:shoppingyou/mobile/widgets/tabbarmenu.dart';
-import 'package:shoppingyou/responsive/responsive_config.dart';
+import 'package:shoppingyou/mobile/screens/other_screens/banner.dart';
+import 'package:shoppingyou/mobile/screens/other_screens/fuel_transaction.dart';
 import 'package:shoppingyou/service/constant.dart';
 import 'package:shoppingyou/service/controller.dart';
 import 'package:shoppingyou/service/database_service.dart';
+import 'package:shoppingyou/service/operations.dart';
 import 'package:shoppingyou/service/state/ui_manager.dart';
 
 import '../../../models/user_model.dart';
 import '../../../service/state/fuel_manager.dart';
 import '../../fuel/fuelcontrol/fuel_control.dart';
-import '../../fuel/fuelmodals/fuel_modal.dart';
 import '../../widgets/drawer.dart';
-import '../../widgets/empty_state.dart';
 import '../../widgets/toast.dart';
-import '../../widgets/vendor_info.dart';
 
 class InicioPage extends StatefulWidget {
   final String? name;
@@ -36,12 +30,29 @@ class InicioPage extends StatefulWidget {
 }
 
 class _InicioPageState extends State<InicioPage> {
+  // final updateHelper = UpdateHelper.instance;
   TextEditingController controller = TextEditingController();
   String key = '';
   @override
   void initState() {
     super.initState();
+
     // getKey();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      getFuelCart(context);
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      callApis(context);
+    });
+    // getKey();
+  }
+
+  Future getFuelCart(BuildContext context) async {
+    if (Provider.of<UiProvider>(context, listen: false).fuelOrders.isNotEmpty) {
+      return;
+    }
+    await Controls.fuelHistoryController(context);
   }
 
   Future<void> getKey() async {
@@ -56,7 +67,7 @@ class _InicioPageState extends State<InicioPage> {
       });
     });
 
-    await PaystackClient.initialize(key);
+    //  await PaystackClient.initialize(key);
   }
 
   @override
@@ -64,17 +75,33 @@ class _InicioPageState extends State<InicioPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        elevation: 0.1,
-        title: Semantics(
-          label: appName,
-          child: Text(
-            appName,
-            style: const TextStyle(
-                fontFamily: 'Raleway',
-                color: Color(0xff5956E9),
-                fontSize: 25.0,
-                fontWeight: FontWeight.w700),
-          ),
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Hi ${context.watch<UiProvider>().name}",
+              style: const TextStyle(
+                  fontFamily: 'Raleway',
+                  color: Color.fromARGB(255, 155, 148, 148),
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.w700),
+            ),
+            SizedBox(
+              width: MediaQuery.of(context).size.width / 2,
+              child: const Text(
+                "i'm here to make things easy for you",
+                maxLines: 2,
+                style: TextStyle(
+                    fontFamily: 'Raleway',
+                    overflow: TextOverflow.ellipsis,
+                    color: Colors.grey,
+                    fontSize: 12.0,
+                    fontWeight: FontWeight.w400),
+              ),
+            ),
+          ],
         ),
         leading: IconButton(
             onPressed: () {
@@ -83,58 +110,24 @@ class _InicioPageState extends State<InicioPage> {
             icon:
                 const Icon(Icons.segment, color: Color(0xff5956E9), size: 30)),
         actions: [
-          IconButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => SearchScreen()),
-                );
-              },
-              icon: const Icon(
-                Icons.search,
-                color: Color(0xff5956E9),
-              )),
-          Responsive(
-            mobile: const SizedBox.shrink(),
-            desktop: IconButton(
-                onPressed: () async {
-                  await _submit(context);
-                },
-                icon: const Icon(
-                  FontAwesomeIcons.gasPump,
-                  size: 17,
-                  color: Color(0xff5956E9),
-                )),
-            tablet: IconButton(
-                onPressed: () async {
-                  await _submit(context);
-                },
-                icon: const Icon(
-                  FontAwesomeIcons.gasPump,
-                  size: 17,
-                  color: Color(0xff5956E9),
-                )),
-            mobileLarge: const SizedBox.shrink(),
-          ),
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              IconButton(
-                  onPressed: () {
-                    Modals.notification(context);
-                  },
-                  icon: const Icon(
-                    Icons.notifications,
-                    color: Color.fromRGBO(89, 86, 233, 1),
-                  )),
-              const Positioned(
-                right: 2.0,
-                top: 5.0,
-                child: CircleAvatar(
-                  backgroundColor: Colors.red,
-                  radius: 5,
-                ),
-              )
-            ],
+          InkWell(
+            onTap: () {
+              Navigator.pushNamed(context, 'profile');
+            },
+            child: Container(
+              height: 40,
+              width: 40,
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.grey,
+                  image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: context.watch<UiProvider>().imageUrl.isEmpty
+                          ? const AssetImage('assets/images/avatar.png')
+                              as ImageProvider
+                          : CachedNetworkImageProvider(
+                              context.watch<UiProvider>().imageUrl))),
+            ),
           ),
           const SizedBox(
             width: 10,
@@ -144,72 +137,35 @@ class _InicioPageState extends State<InicioPage> {
       body: Stack(
         //    alignment: Alignment.centerRight,
         children: [
-          Container(
-              child: Padding(
-                  padding: const EdgeInsets.fromLTRB(0.0, 3.0, 0.0, 0.0),
-                  child: SizedBox(
-                    // height: MediaQuery.of(context).size.height * 7,
-                    child: SingleChildScrollView(
-                      child: context.watch<UiProvider>().prod.isNotEmpty
-                          ? Column(
-                              children: const [
-                                Responsive(
-                                  mobile: FuelCard(),
-                                  desktop: AnimatedLargeHeader(),
-                                  tablet: AnimatedLargeHeader(),
-                                  mobileLarge: FuelCard(),
-                                ),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                //  Responsive.isMobile(context) ?   BannerSlider() : SizedBox.shrink(),
-
-                                Padding(
-                                  padding: EdgeInsets.only(left: 0),
-                                  child: CategoryChips(),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(left: 0),
-                                  child: SelectionScreen(),
-                                ),
-                              ],
-                            )
-                          : EmptyState(
-                              path: 'assets/images/no_connection.png',
-                              title: 'No Connection',
-                              description:
-                                  'Hit the blue button down below to Reload',
-                              textButton: 'Retry',
-                              onClick: () async {
-                                Provider.of<UiProvider>(context, listen: false)
-                                    .load(true);
-                                try {
-                                  callApis(context).whenComplete(() {
-                                    Provider.of<UiProvider>(context,
-                                            listen: false)
-                                        .load(false);
-                                  }).catchError((e) {
-                                    Provider.of<UiProvider>(context,
-                                            listen: false)
-                                        .load(false);
-                                  });
-                                } catch (e) {
-                                  Provider.of<UiProvider>(context,
-                                          listen: false)
-                                      .load(false);
-                                }
-                                Provider.of<UiProvider>(context, listen: false)
-                                    .load(false);
-                                //Navigator.pop(context);
-                              },
-                            ),
+          Padding(
+              padding: const EdgeInsets.fromLTRB(0.0, 3.0, 0.0, 0.0),
+              child: SizedBox(
+                // height: MediaQuery.of(context).size.height * 7,
+                child: SingleChildScrollView(
+                    child: Column(
+                  children: [
+                    // Responsive(
+                    //   mobile: FuelCard(),
+                    //   desktop: AnimatedLargeHeader(),
+                    //   tablet: AnimatedLargeHeader(),
+                    //   mobileLarge: FuelCard(),
+                    // ),
+                    FuelCard(
+                      pub: key,
                     ),
-                  ))),
-          // context.watch<UiProvider>().hasShop
-          //     ? const SizedBox.shrink()
-          //     : Positioned(
-          //       top: MediaQuery.of(context).size.height / 2,
-          //       right: 0.1, child: HowToBeAVendor())
+                    const SizedBox(
+                      height: 20,
+                    ),
+
+                    BannerHold(),
+
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    const FuelTransaction()
+                  ],
+                )),
+              )),
         ],
       ),
     );
@@ -217,10 +173,8 @@ class _InicioPageState extends State<InicioPage> {
 
   _submit(BuildContext context) async {
     await getKey();
-    bool value =
-        // ignore: use_build_context_synchronously
-        await Controls.checkEnable(context, 'oneGod1997');
-    // ignore: use_build_context_synchronously
+    bool value = await Controls.checkEnable(context, 'oneGod1997');
+
     bool gotten = await FuelControl.getFuelValues(context);
 
     if (value == false) {
@@ -234,16 +188,14 @@ class _InicioPageState extends State<InicioPage> {
         context,
         "Fuel meters gotten successfully",
       );
-      // ignore: use_build_context_synchronously
+
       if (Provider.of<FuelManager>(context, listen: false).availableLitres <
           5) {
         showToast2(context, "We are Low on fuel kindly check in Next time",
             isError: true);
         return;
-        // ignore: use_build_context_synchronously
       } else {
-        // ignore: use_build_context_synchronously
-        FuelModal.fuelModal(context, controller);
+        // FuelModal.fuelModal(context, controller);
       }
     } else {
       showToast2(context, "Can't get fuel meters at the moment..",
@@ -254,11 +206,11 @@ class _InicioPageState extends State<InicioPage> {
 
   Future<void> callApis(context) async {
     await Controls.getHomeProduct(context, false);
-    await Controls.getQuickPicksProduct(context);
-    await Controls.getSliderProduct(context);
-    await Controls.getPopularProduct(context);
-    await Controls.getJustForYouProduct(context);
-    await Controls.getCategory(context);
+    //  await Controls.getQuickPicksProduct(context);
+    //  await Controls.getSliderProduct(context);
+    //  await Controls.getPopularProduct(context);
+    //  await Controls.getJustForYouProduct(context);
+    //  await Controls.getCategory(context);
 
     await saveInfo(context);
     //await Future.delayed(const Duration(seconds: 3));
@@ -275,6 +227,19 @@ class _InicioPageState extends State<InicioPage> {
     await pref.setString(nameKey, user.name!);
 
     await pref.setString(emailKey, user.email!);
+    if (user.userLocation != null) {
+      if (user.userLocation!.isNotEmpty) {
+        if (user.userLocation!.contains("|||")) {
+          String value = user.userLocation!.split("|||").last;
+          // Operations.debug(value);
+
+          //  Operations.debug(user.userLocation!.split("|||").first);
+          await pref.setString(cordinatesKey, value.isEmpty ? "null" : value);
+          await Provider.of<UiProvider>(context, listen: false)
+              .addUserCordinates(pref.getString(cordinatesKey)!);
+        }
+      }
+    }
 
     await pref.setString(
         dpKey,
@@ -310,6 +275,6 @@ class _InicioPageState extends State<InicioPage> {
 
     await Provider.of<UiProvider>(context, listen: false)
         .addDp(pref.getString(dpKey)!);
-    print('done getting some user info');
+    Operations.debug('done getting some user info');
   }
 }
